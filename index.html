@@ -488,6 +488,22 @@
       validirajFormu();
     }
 
+    /* Funkcija koja garantovano čisti #admin / ?admin iz URL-a */
+    function ocistiUrlParametre() {
+      let cleanUrl = window.location.pathname;
+      const urlParams = new URLSearchParams(window.location.search);
+      urlParams.delete('admin');
+      
+      const paramStr = urlParams.toString();
+      if (paramStr) {
+        cleanUrl += '?' + paramStr;
+      } else if (aktivnaKampanja && aktivnaKampanja.id && aktivnaKampanja.id !== '1') {
+        cleanUrl += '?id=' + aktivnaKampanja.id;
+      }
+      
+      window.history.replaceState({}, document.title, cleanUrl);
+    }
+
     /* --- LOGIKA VALIDACIJE I DUGMETA SUBMIT --- */
     function validirajFormu() {
       const btnSubmit = document.getElementById('btnSubmit');
@@ -513,7 +529,6 @@
       btnSubmit.disabled = !isFormValid;
     }
 
-    // Pratimo promjene na poljima forme radi live validacije
     document.getElementById('mkfKreditnaForma').addEventListener('input', validirajFormu);
     document.getElementById('mkfKreditnaForma').addEventListener('change', validirajFormu);
 
@@ -543,7 +558,7 @@
       const mzSelect = document.getElementById('selectMZ');
       const odabranaOpcina = opcinaSelect.value;
 
-      mzSelect.innerHTML = '<option value="" disabled selected>Odaberite mjesnu zajedницу</option>';
+      mzSelect.innerHTML = '<option value="" disabled selected>Odaberite mjesnu zajednicu</option>';
       
       if (MJESNE_ZAJEDNICE[odabranaOpcina]) {
         MJESNE_ZAJEDNICE[odabranaOpcina].forEach(mz => {
@@ -636,13 +651,7 @@
     function zatvoriIOdjaviAdmina() {
       odjaviAdmina();
       document.getElementById('adminModal').style.display = 'none';
-
-      // Vraćanje URL-a na inicijalnu formu (uklanjanje #admin ili ?admin bez osvježavanja)
-      let cleanUrl = window.location.pathname;
-      if (aktivnaKampanja && aktivnaKampanja.id && aktivnaKampanja.id !== '1') {
-        cleanUrl += '?id=' + aktivnaKampanja.id;
-      }
-      window.history.pushState({}, document.title, cleanUrl);
+      ocistiUrlParametre();
     }
 
     async function prijaviAdmina(e) {
@@ -681,6 +690,13 @@
       document.getElementById('adminLoginView').style.display = 'block';
       document.getElementById('btnLogout').style.display = 'none';
     }
+
+    /* Podrška za ESC tipku za izlaz */
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        zatvoriIOdjaviAdmina();
+      }
+    });
 
     function pokreniUredjivanje(id) {
       const k = MOCK_KAMPANJE.find(item => String(item.id) === String(id));
