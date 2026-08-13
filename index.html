@@ -133,6 +133,20 @@
     .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 15px; margin-bottom: 20px; }
     .btn-close { background: transparent; border: none; font-size: 20px; cursor: pointer; color: #64748b; }
 
+    /* DUGME ZA ODJAVU */
+    .btn-logout {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fca5a5;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: none; /* Prikazuje se samo kad je admin prijavljen */
+    }
+    .btn-logout:hover { background: #fecaca; }
+
     /* TABELE U ADMINU */
     table { width: 100%; border-collapse: collapse; margin-top: 12px; }
     th, td { text-align: left; padding: 10px; border-bottom: 1px solid #e2e8f0; font-size: 12.5px; }
@@ -292,21 +306,27 @@
     <div class="admin-modal-content">
       <div class="modal-header">
         <h2 style="margin:0; color:#0066b2;">⚙️ Administracija</h2>
-        <button class="btn-close" onclick="zatvoriAdminModal()">✖</button>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <button id="btnLogout" class="btn-logout" onclick="odjaviAdmina()">🚪 Odjavi se</button>
+          <button class="btn-close" onclick="zatvoriAdminModal()">✖</button>
+        </div>
       </div>
 
       <!-- PRIJAVA -->
       <div id="adminLoginView" style="max-width: 350px; margin: 40px auto; text-align: center;">
         <h3 style="margin-bottom: 20px;">Prijava na Admin Panel</h3>
-        <div class="mkf-field">
-          <input type="text" id="adminUser" class="mkf-input" placeholder="Korisničko ime">
-        </div>
-        <div class="mkf-field">
-          <input type="password" id="adminPass" class="mkf-input" placeholder="Lozinka">
-        </div>
-        <button class="mkf-btn-submit" onclick="prijaviAdmina()">PRIJAVI SE</button>
+        <form onsubmit="prijaviAdmina(event)">
+          <div class="mkf-field">
+            <input type="text" id="adminUser" class="mkf-input" placeholder="Korisničko ime" required autocomplete="username">
+          </div>
+          <div class="mkf-field">
+            <input type="password" id="adminPass" class="mkf-input" placeholder="Lozinka" required autocomplete="current-password">
+          </div>
+          <button type="submit" class="mkf-btn-submit">PRIJAVI SE</button>
+        </form>
       </div>
 
+      <!-- DASHBOARD (PRIKAZUJE SE SAMO KAD JE ADMIN AUTENTIFICIRAN) -->
       <div id="adminDashboardView" style="display: none;">
         
         <!-- FORMA ZA KREIRANJE I EDITOVANJE KAMPANJA -->
@@ -402,9 +422,12 @@
   </div>
 
   <script>
-    // SHA-256 Hashevi za F12 zaštitu (Korisničko ime i lozinka: admin / admin)
+    // SHA-256 Hashevi (Korisničko ime i lozinka: admin / admin)
     const ADMIN_USER_HASH = "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918";
     const ADMIN_PASS_HASH = "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918";
+
+    // STANJE SESIJE (Čuva se samo u memoriji, poništava se nakon zatvaranja/odjave)
+    let isAdminAutentificiran = false;
 
     async function izracunajHash(str) {
       const msgUint8 = new TextEncoder().encode(str);
@@ -574,10 +597,19 @@
       document.getElementById('screenSuccess').style.display = 'block';
     });
 
+    /* --- ADMIN AUTENTIFIKACIJA I ODJAVA --- */
+
     function otvoriAdminModal() { 
       document.getElementById('adminModal').style.display = 'flex'; 
-      if (document.getElementById('adminDashboardView').style.display === 'block') {
+      if (isAdminAutentificiran) {
+        document.getElementById('adminLoginView').style.display = 'none';
+        document.getElementById('adminDashboardView').style.display = 'block';
+        document.getElementById('btnLogout').style.display = 'inline-block';
         osvjeziAdminTabele();
+      } else {
+        document.getElementById('adminLoginView').style.display = 'block';
+        document.getElementById('adminDashboardView').style.display = 'none';
+        document.getElementById('btnLogout').style.display = 'none';
       }
     }
     
@@ -585,7 +617,9 @@
       document.getElementById('adminModal').style.display = 'none'; 
     }
 
-    async function prijaviAdmina() {
+    async function prijaviAdmina(e) {
+      if (e) e.preventDefault();
+      
       const u = document.getElementById('adminUser').value;
       const p = document.getElementById('adminPass').value;
 
@@ -593,12 +627,37 @@
       const passHash = await izracunajHash(p);
 
       if (userHash === ADMIN_USER_HASH && passHash === ADMIN_PASS_HASH) {
+        isAdminAutentificiran = true;
+        
+        // Praznjenje polja za prijavu iz sigurnosnih razloga
+        document.getElementById('adminUser').value = '';
+        document.getElementById('adminPass').value = '';
+
         document.getElementById('adminLoginView').style.display = 'none';
         document.getElementById('adminDashboardView').style.display = 'block';
+        document.getElementById('btnLogout').style.display = 'inline-block';
+        
         osvjeziAdminTabele();
       } else {
         alert('Neispravni pristupni podaci!');
       }
+    }
+
+    function odjaviAdmina() {
+      // 1. Poništavanje sesije
+      isAdminAutentificiran = false;
+
+      // 2. Čišćenje formi
+      document.getElementById('adminUser').value = '';
+      document.getElementById('adminPass').value = '';
+      otkaziUredjivanje();
+
+      // 3. Prebacivanje prikaza na login ekran
+      document.getElementById('adminDashboardView').style.display = 'none';
+      document.getElementById('adminLoginView').style.display = 'block';
+      document.getElementById('btnLogout').style.display = 'none';
+
+      alert('Uspješno ste se odjavili sa Admin Panela.');
     }
 
     function pokreniUredjivanje(id) {
@@ -674,6 +733,8 @@
     }
 
     function osvjeziAdminTabele() {
+      if (!isAdminAutentificiran) return;
+
       const tbodyK = document.getElementById('tabelaKampanja');
       tbodyK.innerHTML = '';
       MOCK_KAMPANJE.forEach(k => {
