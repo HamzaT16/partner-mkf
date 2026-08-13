@@ -68,9 +68,8 @@
     .badge { padding: 4px 8px; border-radius: 10px; font-size: 11px; font-weight: 700; white-space: nowrap; }
     .badge-active { background: #dcfce7; color: #15803d; }
     .badge-inactive { background: #fee2e2; color: #991b1b; }
-    .badge-sync { background: #e0f2fe; color: #0369a1; }
-    .badge-pending { background: #fef3c7; color: #92400e; }
-    .btn-action { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 6px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; color: #334155; }
+    .btn-action { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 5px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; color: #334155; margin-right: 2px; }
+    .btn-action:hover { background: #e2e8f0; }
     .admin-form-card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 16px; border-radius: 12px; margin-bottom: 24px; }
   </style>
 </head>
@@ -103,7 +102,7 @@
 
       <form id="mkfKreditnaForma">
         <div class="mkf-header">
-          <h2>Kreditni Upit</h2>
+          <h2 id="kampanjaTitle">Kreditni Upit</h2>
           <p id="kampanjaSubhead">Popunite brzi zahtjev i saznajte uslove u nekoliko klikova.</p>
         </div>
 
@@ -207,7 +206,7 @@
         </div>
       </div>
 
-      <!-- PRIJAVA (FIREBASE AUTH) -->
+      <!-- PRIJAVA -->
       <div id="adminLoginView" style="max-width: 350px; margin: 40px auto; text-align: center;">
         <h3 style="margin-bottom: 20px;">Prijava na Admin Panel</h3>
         <form id="adminLoginForm">
@@ -227,6 +226,8 @@
         <div class="admin-form-card">
           <h4 id="formTitle" style="margin-top: 0; color: #0066b2;">➕ Kreiraj novu kampanjsku formu</h4>
           <form id="formNovaKampanja">
+            <input type="hidden" id="editKampanjaId" value="">
+
             <div class="mkf-grid2">
               <div class="mkf-field">
                 <label>Naziv Kampanje *</label>
@@ -274,7 +275,10 @@
               </div>
             </div>
 
-            <button type="submit" class="mkf-btn-submit" style="padding: 10px;">SAČUVAJ KAMPANJU U BAZU</button>
+            <div style="display:flex; gap:10px;">
+              <button type="submit" class="mkf-btn-submit" id="btnSaveKampanja" style="padding: 10px;">SAČUVAJ KAMPANJU U BAZU</button>
+              <button type="button" class="btn-action" id="btnCancelEdit" style="display:none; padding:10px;">Otkaži uređivanje</button>
+            </div>
           </form>
         </div>
 
@@ -282,11 +286,13 @@
         <table>
           <thead>
             <tr>
-              <th>ID Kampanje</th>
+              <th>ID</th>
               <th>Naziv / Proizvod</th>
               <th>Kanal</th>
               <th>Status</th>
               <th>Period važenja</th>
+              <th>Kratki Link</th>
+              <th>Akcije</th>
             </tr>
           </thead>
           <tbody id="tabelaKampanja"></tbody>
@@ -316,7 +322,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, doc, setDoc, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDSd7z4bIMcvAywJiot_Kii4XwsNbD4U-U",
@@ -330,6 +336,8 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
+
+    let listaKampanja = [];
 
     const MJESNE_ZAJEDNICE = {
       "Novi Grad Sarajevo": ["Alipašino Polje A", "Alipašino Polje B", "Alipašino Polje C", "Dobrinja A", "Dobrinja B", "Otoka", "Buća Potok", "Mojmilo", "Švrakino Selo"],
@@ -351,6 +359,7 @@
 
     document.querySelectorAll('.mkf-purpose-card').forEach(card => {
       card.addEventListener('click', function() {
+        if (this.classList.contains('disabled')) return;
         document.querySelectorAll('.mkf-purpose-card').forEach(c => c.classList.remove('selected'));
         this.classList.add('selected');
         document.getElementById('inputSvrhaVal').value = this.getAttribute('data-value');
@@ -409,8 +418,9 @@
       btnSubmit.disabled = true;
       btnSubmit.innerText = "SLANJE U TOKU...";
 
+      const leadId = 'LEAD-' + Date.now().toString(36).toUpperCase();
       const leadData = {
-        leadId: 'LEAD-' + Date.now().toString(36).toUpperCase(),
+        leadId: leadId,
         tipLica: trenutniTip,
         klijent: trenutniTip === 'fizicko'
           ? document.getElementById('inputIme').value + ' ' + document.getElementById('inputPrezime').value
@@ -425,11 +435,11 @@
       };
 
       try {
-        await addDoc(collection(db, "leadovi"), leadData);
+        await setDoc(doc(db, "leadovi", leadId), leadData);
         document.getElementById('mkfKreditnaForma').style.display = 'none';
         document.getElementById('screenSuccess').style.display = 'block';
       } catch (err) {
-        alert("Greška: " + err.message);
+        alert("Greška pri slanju: " + err.message);
         btnSubmit.disabled = false;
         btnSubmit.innerText = "POŠALJI KREDITNI UPIT →";
       }
@@ -459,25 +469,199 @@
 
     document.getElementById('btnLogout').addEventListener('click', () => signOut(auth));
 
-    // NOVA KAMPANJA (DODAVANJE U BAZU)
+    // DUGME ZA DOKUČIVANJE OTKAZIVANJA UREĐIVANJA
+    document.getElementById('btnCancelEdit').addEventListener('click', resetAdminForma);
+
+    function resetAdminForma() {
+      document.getElementById('formNovaKampanja').reset();
+      document.getElementById('editKampanjaId').value = "";
+      document.getElementById('formTitle').innerText = "➕ Kreiraj novu kampanjsku formu";
+      document.getElementById('btnSaveKampanja').innerText = "SAČUVAJ KAMPANJU U BAZU";
+      document.getElementById('btnCancelEdit').style.display = 'none';
+    }
+
+    // SPASAVANJE / IZMJENA KAMPANJE (NUMERIČKI ID)
     document.getElementById('formNovaKampanja').addEventListener('submit', async (e) => {
       e.preventDefault();
-      try {
-        await addDoc(collection(db, "kampanje"), {
-          naziv: document.getElementById('newNaziv').value,
-          proizvod: document.getElementById('newProizvod').value,
-          kanal: document.getElementById('newKanal').value,
-          status: document.getElementById('newStatus').value,
-          datumPocetak: document.getElementById('newPocetak').value,
-          datumKraj: document.getElementById('newKraj').value
+      
+      const editId = document.getElementById('editKampanjaId').value;
+      let targetId = editId;
+
+      if (!targetId) {
+        // Generisanje broja 1, 2, 3...
+        let maxId = 0;
+        listaKampanja.forEach(k => {
+          const num = parseInt(k.id);
+          if (!isNaN(num) && num > maxId) maxId = num;
         });
-        alert("Kampanja kreirana!");
-        e.target.reset();
+        targetId = (maxId + 1).toString();
+      }
+
+      const kampanjaObj = {
+        naziv: document.getElementById('newNaziv').value,
+        proizvod: document.getElementById('newProizvod').value,
+        kanal: document.getElementById('newKanal').value,
+        status: document.getElementById('newStatus').value,
+        datumPocetak: document.getElementById('newPocetak').value,
+        datumKraj: document.getElementById('newKraj').value
+      };
+
+      try {
+        await setDoc(doc(db, "kampanje", targetId), kampanjaObj);
+        alert(editId ? "Kampanja uspješno izmijenjena!" : "Nova kampanja kreirana sa ID: " + targetId);
+        resetAdminForma();
         ucitajAdminData();
       } catch (err) {
-        alert("Greška: " + err.message);
+        alert("Greška sa bazom: " + err.message);
       }
     });
+
+    // UČITAVANJE SVIH PODATAKA
+    async function ucitajAdminData() {
+      try {
+        // 1. Leadovi
+        const queryL = await getDocs(collection(db, "leadovi"));
+        const tbodyL = document.getElementById('tabelaLeadova');
+        tbodyL.innerHTML = queryL.empty ? '<tr><td colspan="8" style="text-align:center;">Nema upita.</td></tr>' : '';
+        
+        queryL.forEach(docSnap => {
+          const l = docSnap.data();
+          tbodyL.innerHTML += `
+            <tr>
+              <td><b>${l.leadId || docSnap.id}</b></td>
+              <td><b>${l.klijent || '-'}</b></td>
+              <td>${l.telefon || '-'}</td>
+              <td>${l.opcina || '-'}</td>
+              <td>${l.mjesnaZajednica || '-'}</td>
+              <td><b>${l.iznos || '-'}</b></td>
+              <td>${l.svrha || '-'}</td>
+              <td><span class="badge badge-active">${l.crmSyncStatus || 'SYNCHRONIZED'}</span></td>
+            </tr>
+          `;
+        });
+
+        // 2. Kampanje
+        const queryK = await getDocs(collection(db, "kampanje"));
+        const tbodyK = document.getElementById('tabelaKampanja');
+        tbodyK.innerHTML = queryK.empty ? '<tr><td colspan="7" style="text-align:center;">Nema kampanja.</td></tr>' : '';
+        
+        listaKampanja = [];
+        const baseUrl = window.location.origin + window.location.pathname;
+
+        queryK.forEach(docSnap => {
+          const k = docSnap.data();
+          const id = docSnap.id;
+          listaKampanja.push({ id, ...k });
+
+          const shortUrl = `${baseUrl}?c=${id}`;
+
+          tbodyK.innerHTML += `
+            <tr>
+              <td><b>#${id}</b></td>
+              <td><b>${k.naziv}</b><br><small style="color:#0066b2;">🎯 ${k.proizvod}</small></td>
+              <td>${k.kanal}</td>
+              <td><span class="badge ${k.status === 'Objavljena' ? 'badge-active' : 'badge-inactive'}">${k.status}</span></td>
+              <td>${k.datumPocetak} do ${k.datumKraj}</td>
+              <td><a href="${shortUrl}" target="_blank" style="font-size:11px; color:#0066b2;">${shortUrl}</a></td>
+              <td>
+                <button class="btn-action btn-toggle-status" data-id="${id}" data-status="${k.status}">
+                  ${k.status === 'Objavljena' ? '⏸️ Deaktiviraj' : '▶️ Aktiviraj'}
+                </button>
+                <button class="btn-action btn-edit-kampanja" data-id="${id}">✏️ Uredi</button>
+                <button class="btn-action btn-copy-link" data-url="${shortUrl}">📋 Kopiraj</button>
+              </td>
+            </tr>
+          `;
+        });
+
+        // Dodijeli evente na dugmad u tabeli
+        document.querySelectorAll('.btn-toggle-status').forEach(btn => {
+          btn.addEventListener('click', async function() {
+            const id = this.getAttribute('data-id');
+            const currStatus = this.getAttribute('data-status');
+            const newStatus = currStatus === 'Objavljena' ? 'Neaktivna' : 'Objavljena';
+            await updateDoc(doc(db, "kampanje", id), { status: newStatus });
+            ucitajAdminData();
+          });
+        });
+
+        document.querySelectorAll('.btn-edit-kampanja').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const id = this.getAttribute('data-id');
+            const k = listaKampanja.find(item => item.id === id);
+            if (k) {
+              document.getElementById('editKampanjaId').value = id;
+              document.getElementById('newNaziv').value = k.naziv;
+              document.getElementById('newProizvod').value = k.proizvod;
+              document.getElementById('newKanal').value = k.kanal;
+              document.getElementById('newStatus').value = k.status;
+              document.getElementById('newPocetak').value = k.datumPocetak;
+              document.getElementById('newKraj').value = k.datumKraj;
+
+              document.getElementById('formTitle').innerText = `✏️ Uređivanje kampanje #${id}`;
+              document.getElementById('btnSaveKampanja').innerText = "SAČUVAJ IZMJENE";
+              document.getElementById('btnCancelEdit').style.display = 'inline-block';
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+          });
+        });
+
+        document.querySelectorAll('.btn-copy-link').forEach(btn => {
+          btn.addEventListener('click', function() {
+            navigator.clipboard.writeText(this.getAttribute('data-url'));
+            alert("Kratki link kopiran u clipboard!");
+          });
+        });
+
+      } catch (err) {
+        console.error("Greška pri učitavanju:", err);
+      }
+    }
+
+    // INICIJALIZACIJA FRONTEND POGLEDA NA OSNOVU URL PARAMETRA (?c=1)
+    async function provjeriKampanjuUrl() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const campId = urlParams.get('c');
+
+      if (campId) {
+        try {
+          const queryK = await getDocs(collection(db, "kampanje"));
+          let nadjena = null;
+          queryK.forEach(docSnap => {
+            if (docSnap.id === campId) nadjena = docSnap.data();
+          });
+
+          if (nadjena) {
+            if (nadjena.status === 'Neaktivna') {
+              document.getElementById('mkfKreditnaForma').style.display = 'none';
+              document.getElementById('screenInactive').style.display = 'block';
+              return;
+            }
+
+            document.getElementById('kampanjaTitle').innerText = nadjena.naziv;
+            
+            // Onemogući ne-targetirane proizvode ako je izabran specifičan
+            if (nadjena.proizvod && nadjena.proizvod !== 'SVI') {
+              document.querySelectorAll('.mkf-purpose-card').forEach(card => {
+                const val = card.getAttribute('data-value');
+                if (val !== nadjena.proizvod) {
+                  card.classList.add('disabled');
+                  card.classList.remove('selected');
+                } else {
+                  card.classList.remove('disabled');
+                  card.classList.add('selected');
+                  document.getElementById('inputSvrhaVal').value = val;
+                }
+              });
+            }
+          }
+        } catch (err) {
+          console.error("Greška pri provjeri URL kampanje:", err);
+        }
+      }
+    }
+
+    provjeriKampanjuUrl();
 
     // AUTH STATE CHECK
     onAuthStateChanged(auth, async (user) => {
@@ -493,51 +677,6 @@
       }
     });
 
-    async function ucitajAdminData() {
-      // Učitaj Leadove
-      try {
-        const queryL = await getDocs(collection(db, "leadovi"));
-        const tbodyL = document.getElementById('tabelaLeadova');
-        tbodyL.innerHTML = queryL.empty ? '<tr><td colspan="8" style="text-align:center;">Nema upita.</td></tr>' : '';
-        
-        queryL.forEach(doc => {
-          const l = doc.data();
-          tbodyL.innerHTML += `
-            <tr>
-              <td><b>${l.leadId || '-'}</b></td>
-              <td><b>${l.klijent || '-'}</b></td>
-              <td>${l.telefon || '-'}</td>
-              <td>${l.opcina || '-'}</td>
-              <td>${l.mjesnaZajednica || '-'}</td>
-              <td><b>${l.iznos || '-'}</b></td>
-              <td>${l.svrha || '-'}</td>
-              <td><span class="badge badge-active">${l.crmSyncStatus || 'SYNCHRONIZED'}</span></td>
-            </tr>
-          `;
-        });
-
-        // Učitaj Kampanje
-        const queryK = await getDocs(collection(db, "kampanje"));
-        const tbodyK = document.getElementById('tabelaKampanja');
-        tbodyK.innerHTML = queryK.empty ? '<tr><td colspan="5" style="text-align:center;">Nema kampanja.</td></tr>' : '';
-        
-        queryK.forEach(doc => {
-          const k = doc.data();
-          tbodyK.innerHTML += `
-            <tr>
-              <td><b>${doc.id}</b></td>
-              <td><b>${k.naziv}</b><br><small style="color:#0066b2;">🎯 ${k.proizvod}</small></td>
-              <td>${k.kanal}</td>
-              <td><span class="badge ${k.status === 'Objavljena' ? 'badge-active' : 'badge-inactive'}">${k.status}</span></td>
-              <td>${k.datumPocetak} do ${k.datumKraj}</td>
-            </tr>
-          `;
-        });
-
-      } catch (err) {
-        console.error("Greška pri učitavanju:", err);
-      }
-    }
   </script>
 </body>
 </html>
