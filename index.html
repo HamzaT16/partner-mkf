@@ -7,38 +7,16 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; }
-    body {
-      background-color: #f1f5f9;
-      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-      margin: 0;
-      padding: 0;
-      color: #0f172a;
-    }
+    body { background-color: #f1f5f9; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; margin: 0; padding: 0; color: #0f172a; }
 
     /* TOPBAR */
-    .app-topbar {
-      background: #ffffff;
-      border-bottom: 1px solid #e2e8f0;
-      padding: 14px 28px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-    }
+    .app-topbar { background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 14px 28px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
     .app-logo { font-weight: 800; color: #0066b2; font-size: 18px; letter-spacing: 1px; }
 
     .app-container { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
 
     /* FORMA STILOVI */
-    .mkf-form-wrapper {
-      max-width: 520px;
-      margin: 0 auto;
-      padding: 32px;
-      background: #ffffff;
-      border: 1px solid rgba(226, 232, 240, 0.8);
-      border-radius: 24px;
-      box-shadow: 0 20px 40px -15px rgba(0, 102, 178, 0.08);
-    }
+    .mkf-form-wrapper { max-width: 520px; margin: 0 auto; padding: 32px; background: #ffffff; border: 1px solid rgba(226, 232, 240, 0.8); border-radius: 24px; box-shadow: 0 20px 40px -15px rgba(0, 102, 178, 0.08); }
     .mkf-header { text-align: center; margin-bottom: 24px; }
     .mkf-header h2 { margin: 0 0 8px 0; color: #0066b2; font-size: 22px; }
     .mkf-header p { margin: 0; font-size: 13.5px; color: #64748b; }
@@ -59,31 +37,13 @@
 
     /* SVRHA / PROIZVOD KREDITA */
     .mkf-purpose-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 4px; }
-    .mkf-purpose-card {
-      border: 1.5px solid #e2e8f0;
-      background: #f8fafc;
-      border-radius: 14px;
-      padding: 12px 8px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-    }
+    .mkf-purpose-card { border: 1.5px solid #e2e8f0; background: #f8fafc; border-radius: 14px; padding: 12px 8px; text-align: center; cursor: pointer; transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; gap: 6px; }
     .mkf-purpose-card .icon { font-size: 22px; }
     .mkf-purpose-card .title { font-size: 11.5px; font-weight: 700; color: #475569; }
     .mkf-purpose-card:hover { border-color: #93c5fd; background: #f0f7ff; }
     .mkf-purpose-card.selected { border-color: #0066b2; background: #f0f7ff; box-shadow: 0 4px 12px rgba(0, 102, 178, 0.12); }
     .mkf-purpose-card.selected .title { color: #0066b2; }
-    
-    .mkf-purpose-card.disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-      pointer-events: none;
-      filter: grayscale(1);
-    }
+    .mkf-purpose-card.disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; filter: grayscale(1); }
     
     .mkf-btn-submit { width: 100%; padding: 16px; background: #0066b2; color: #fff; border: none; border-radius: 12px; font-weight: 800; font-size: 14px; cursor: pointer; text-transform: uppercase; margin-top: 10px; transition: all 0.2s ease; }
     .mkf-btn-submit:disabled { background: #cbd5e1; color: #94a3b8; cursor: not-allowed; opacity: 0.7; }
@@ -93,6 +53,25 @@
     .status-icon { font-size: 48px; margin-bottom: 12px; }
     .status-title { font-size: 20px; font-weight: 800; color: #0f172a; margin-bottom: 8px; }
     .status-desc { font-size: 14px; color: #64748b; margin-bottom: 20px; }
+
+    /* ADMIN MODAL */
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 1000; }
+    .admin-modal-content { background: #ffffff; width: 95%; max-width: 1150px; max-height: 90vh; border-radius: 20px; overflow-y: auto; padding: 30px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 15px; margin-bottom: 20px; }
+    .btn-close { background: transparent; border: none; font-size: 20px; cursor: pointer; color: #64748b; font-weight: bold; }
+    .btn-logout { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; display: none; }
+
+    /* TABELE U ADMINU */
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    th, td { text-align: left; padding: 10px; border-bottom: 1px solid #e2e8f0; font-size: 12.5px; }
+    th { color: #64748b; font-size: 11px; text-transform: uppercase; background: #f8fafc; }
+    .badge { padding: 4px 8px; border-radius: 10px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+    .badge-active { background: #dcfce7; color: #15803d; }
+    .badge-inactive { background: #fee2e2; color: #991b1b; }
+    .badge-sync { background: #e0f2fe; color: #0369a1; }
+    .badge-pending { background: #fef3c7; color: #92400e; }
+    .btn-action { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 6px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; color: #334155; }
+    .admin-form-card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 16px; border-radius: 12px; margin-bottom: 24px; }
   </style>
 </head>
 <body>
@@ -100,6 +79,7 @@
   <!-- TOPBAR -->
   <div class="app-topbar">
     <div class="app-logo">PARTNER MKF</div>
+    <button class="btn-action" id="openAdminTrigger" style="font-size:12px;">🔑 Admin Panel</button>
   </div>
 
   <div class="app-container">
@@ -107,23 +87,20 @@
     <!-- FRONTEND KLIJENTSKA FORMA -->
     <div class="mkf-form-wrapper">
 
-      <!-- EKRAN 1: NEAKTIVNA / ISTEKLA KAMPANJA -->
       <div id="screenInactive" class="status-card">
         <div class="status-icon">⚠️</div>
         <div class="status-title">Kampanja više nije aktivna</div>
-        <div class="status-desc">Ova kreditna ponuda ili kampanja je trenutno onemogućena ili je istekla. Za više informacija posjetite našu zvaničnu stranicu.</div>
+        <div class="status-desc">Ova kreditna ponuda je onemogućena ili je istekla. Za više informacija posjetite našu stranicu.</div>
         <a href="https://partner.ba" class="mkf-btn-submit" style="display:inline-block; text-decoration:none;">Idi na Partner.ba</a>
       </div>
 
-      <!-- EKRAN 2: POTVRDA USPJEŠNOG SLANJA -->
       <div id="screenSuccess" class="status-card">
         <div class="status-icon">✅</div>
         <div class="status-title">Hvala vam! Vaš upit je zaprimljen.</div>
         <div class="status-desc">Naš kreditni savjetnik će vas kontaktirati u najkraćem mogućem roku.</div>
-        <button class="mkf-btn-submit" onclick="resetForma()">Novi kreditni upit</button>
+        <button class="mkf-btn-submit" id="btnNoviUpit">Novi kreditni upit</button>
       </div>
 
-      <!-- GLAVNA FORMA -->
       <form id="mkfKreditnaForma">
         <div class="mkf-header">
           <h2>Kreditni Upit</h2>
@@ -131,13 +108,13 @@
         </div>
 
         <div class="mkf-toggle">
-          <button type="button" class="mkf-toggle-btn active" id="btnFizicko" onclick="setTipLica('fizicko')">Fizičko lice</button>
-          <button type="button" class="mkf-toggle-btn" id="btnPravno" onclick="setTipLica('pravno')">Pravno lice</button>
+          <button type="button" class="mkf-toggle-btn active" id="btnFizicko">Fizičko lice</button>
+          <button type="button" class="mkf-toggle-btn" id="btnPravno">Pravno lice</button>
         </div>
 
         <div class="mkf-amount-card">
           <div class="mkf-amount-val"><span id="txtIznos">5.000</span> <small style="font-size: 18px;">KM</small></div>
-          <input type="range" min="450" max="10000" step="50" value="5000" class="mkf-slider" id="inputIznos" oninput="document.getElementById('txtIznos').innerText = Number(this.value).toLocaleString('bs-BA')">
+          <input type="range" min="450" max="10000" step="50" value="5000" class="mkf-slider" id="inputIznos">
         </div>
 
         <div class="mkf-grid2" id="fieldsFizicko">
@@ -170,7 +147,7 @@
         <div class="mkf-grid2">
           <div class="mkf-field">
             <label>Općina *</label>
-            <select id="selectOpcina" class="mkf-select" onchange="osvjeziMjesneZajednice()">
+            <select id="selectOpcina" class="mkf-select">
               <option value="" disabled selected>Odaberite općinu</option>
               <option value="Novi Grad Sarajevo">Novi Grad Sarajevo</option>
               <option value="Tuzla">Tuzla</option>
@@ -187,19 +164,18 @@
           </div>
         </div>
 
-        <!-- SVRHA / PROIZVOD KREDITA -->
         <div class="mkf-field">
           <label>Svrha / Proizvod kredita *</label>
           <div class="mkf-purpose-grid">
-            <div class="mkf-purpose-card" id="card-esg" data-value="ESG / Energetska efikasnost" onclick="odaberiSvrhu(this, 'ESG / Energetska efikasnost')">
+            <div class="mkf-purpose-card selected" id="card-esg" data-value="ESG / Energetska efikasnost">
               <span class="icon">🌱</span>
               <span class="title">Energetska efikasnost</span>
             </div>
-            <div class="mkf-purpose-card" id="card-biznis" data-value="Obratna sredstva / Biznis" onclick="odaberiSvrhu(this, 'Obratna sredstva / Biznis')">
+            <div class="mkf-purpose-card" id="card-biznis" data-value="Obratna sredstva / Biznis">
               <span class="icon">💼</span>
               <span class="title">Obratna sredstva</span>
             </div>
-            <div class="mkf-purpose-card" id="card-agro" data-value="Poljoprivreda" onclick="odaberiSvrhu(this, 'Poljoprivreda')">
+            <div class="mkf-purpose-card" id="card-agro" data-value="Poljoprivreda">
               <span class="icon">🚜</span>
               <span class="title">Poljoprivreda</span>
             </div>
@@ -220,9 +196,127 @@
 
   </div>
 
+  <!-- ADMIN PANEL MODAL -->
+  <div class="modal-overlay" id="adminModal">
+    <div class="admin-modal-content">
+      <div class="modal-header">
+        <h2 style="margin:0; color:#0066b2;">⚙️ Administracija</h2>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <button id="btnLogout" class="btn-logout">🚪 Odjavi se</button>
+          <button class="btn-close" id="btnCloseAdmin">✖</button>
+        </div>
+      </div>
+
+      <!-- PRIJAVA (FIREBASE AUTH) -->
+      <div id="adminLoginView" style="max-width: 350px; margin: 40px auto; text-align: center;">
+        <h3 style="margin-bottom: 20px;">Prijava na Admin Panel</h3>
+        <form id="adminLoginForm">
+          <div class="mkf-field">
+            <input type="email" id="adminEmail" class="mkf-input" placeholder="Admin Email" required>
+          </div>
+          <div class="mkf-field">
+            <input type="password" id="adminPass" class="mkf-input" placeholder="Lozinka" required>
+          </div>
+          <button type="submit" class="mkf-btn-submit">PRIJAVI SE</button>
+        </form>
+      </div>
+
+      <!-- DASHBOARD -->
+      <div id="adminDashboardView" style="display: none;">
+        
+        <div class="admin-form-card">
+          <h4 id="formTitle" style="margin-top: 0; color: #0066b2;">➕ Kreiraj novu kampanjsku formu</h4>
+          <form id="formNovaKampanja">
+            <div class="mkf-grid2">
+              <div class="mkf-field">
+                <label>Naziv Kampanje *</label>
+                <input type="text" id="newNaziv" class="mkf-input" placeholder="npr. Viber Agro Kampanja" required>
+              </div>
+              <div class="mkf-field">
+                <label>Targetirani Proizvod / Svrha *</label>
+                <select id="newProizvod" class="mkf-select">
+                  <option value="SVI">Svi proizvodi (Korisnik sam bira)</option>
+                  <option value="ESG / Energetska efikasnost">Energetska efikasnost</option>
+                  <option value="Obratna sredstva / Biznis">Obratna sredstva / Biznis</option>
+                  <option value="Poljoprivreda">Poljoprivreda</option>
+                </select>
+              </div>
+            </div>
+            
+            <div class="mkf-grid2">
+              <div class="mkf-field">
+                <label>Kanal *</label>
+                <select id="newKanal" class="mkf-select">
+                  <option value="Svi kanali">Svi kanali</option>
+                  <option value="Facebook">Facebook</option>
+                  <option value="Viber">Viber</option>
+                  <option value="Instagram">Instagram</option>
+                  <option value="Google">Google</option>
+                </select>
+              </div>
+              <div class="mkf-field">
+                <label>Status *</label>
+                <select id="newStatus" class="mkf-select">
+                  <option value="Objavljena">Objavljena</option>
+                  <option value="Neaktivna">Neaktivna</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="mkf-grid2">
+              <div class="mkf-field">
+                <label>Datum Početka *</label>
+                <input type="date" id="newPocetak" class="mkf-input" required>
+              </div>
+              <div class="mkf-field">
+                <label>Datum Završetka *</label>
+                <input type="date" id="newKraj" class="mkf-input" required>
+              </div>
+            </div>
+
+            <button type="submit" class="mkf-btn-submit" style="padding: 10px;">SAČUVAJ KAMPANJU U BAZU</button>
+          </form>
+        </div>
+
+        <h3 style="color: #0066b2; margin-top: 20px;">📋 Pregled Kampanja</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>ID Kampanje</th>
+              <th>Naziv / Proizvod</th>
+              <th>Kanal</th>
+              <th>Status</th>
+              <th>Period važenja</th>
+            </tr>
+          </thead>
+          <tbody id="tabelaKampanja"></tbody>
+        </table>
+
+        <h3 style="color: #0066b2; margin-top: 30px;">📤 Zaprimljeni Upiti (Leadovi)</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Lead ID</th>
+              <th>Klijent</th>
+              <th>Broj Telefona</th>
+              <th>Općina</th>
+              <th>Mjesna Zajednica</th>
+              <th>Iznos</th>
+              <th>Svrha</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="tabelaLeadova"></tbody>
+        </table>
+
+      </div>
+    </div>
+  </div>
+
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDSd7z4bIMcvAywJiot_Kii4XwsNbD4U-U",
@@ -234,6 +328,7 @@
     };
 
     const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
     const db = getFirestore(app);
 
     const MJESNE_ZAJEDNICE = {
@@ -246,27 +341,38 @@
 
     let trenutniTip = 'fizicko';
 
-    window.setTipLica = function(tip) {
+    // UI Eventi
+    document.getElementById('btnFizicko').addEventListener('click', () => setTipLica('fizicko'));
+    document.getElementById('btnPravno').addEventListener('click', () => setTipLica('pravno'));
+    document.getElementById('inputIznos').addEventListener('input', (e) => {
+      document.getElementById('txtIznos').innerText = Number(e.target.value).toLocaleString('bs-BA');
+    });
+    document.getElementById('selectOpcina').addEventListener('change', osvjeziMjesneZajednice);
+
+    document.querySelectorAll('.mkf-purpose-card').forEach(card => {
+      card.addEventListener('click', function() {
+        document.querySelectorAll('.mkf-purpose-card').forEach(c => c.classList.remove('selected'));
+        this.classList.add('selected');
+        document.getElementById('inputSvrhaVal').value = this.getAttribute('data-value');
+      });
+    });
+
+    function setTipLica(tip) {
       trenutniTip = tip;
       document.getElementById('btnFizicko').classList.toggle('active', tip === 'fizicko');
       document.getElementById('btnPravno').classList.toggle('active', tip === 'pravno');
-      
-      const isFizicko = tip === 'fizicko';
-      document.getElementById('fieldsFizicko').style.display = isFizicko ? 'grid' : 'none';
-      document.getElementById('fieldsPravno').style.display = isFizicko ? 'none' : 'grid';
-
+      document.getElementById('fieldsFizicko').style.display = tip === 'fizicko' ? 'grid' : 'none';
+      document.getElementById('fieldsPravno').style.display = tip === 'fizicko' ? 'none' : 'grid';
       validirajFormu();
-    };
+    }
 
-    window.osvjeziMjesneZajednice = function() {
-      const opcinaSelect = document.getElementById('selectOpcina');
+    function osvjeziMjesneZajednice() {
+      const opcina = document.getElementById('selectOpcina').value;
       const mzSelect = document.getElementById('selectMZ');
-      const odabranaOpcina = opcinaSelect.value;
-
       mzSelect.innerHTML = '<option value="" disabled selected>Odaberite mjesnu zajednicu</option>';
       
-      if (MJESNE_ZAJEDNICE[odabranaOpcina]) {
-        MJESNE_ZAJEDNICE[odabranaOpcina].forEach(mz => {
+      if (MJESNE_ZAJEDNICE[opcina]) {
+        MJESNE_ZAJEDNICE[opcina].forEach(mz => {
           mzSelect.innerHTML += `<option value="${mz}">${mz}</option>`;
         });
         mzSelect.disabled = false;
@@ -274,14 +380,7 @@
         mzSelect.disabled = true;
       }
       validirajFormu();
-    };
-
-    window.odaberiSvrhu = function(element, vrednost) {
-      if (element.classList.contains('disabled')) return;
-      document.querySelectorAll('.mkf-purpose-card').forEach(card => card.classList.remove('selected'));
-      element.classList.add('selected');
-      document.getElementById('inputSvrhaVal').value = vrednost;
-    };
+    }
 
     function validirajFormu() {
       const btnSubmit = document.getElementById('btnSubmit');
@@ -291,15 +390,10 @@
       const telVal = document.getElementById('inputTelefon').value.trim();
 
       let isIdentityValid = false;
-
       if (trenutniTip === 'fizicko') {
-        const imeVal = document.getElementById('inputIme').value.trim();
-        const prezimeVal = document.getElementById('inputPrezime').value.trim();
-        isIdentityValid = imeVal !== '' && prezimeVal !== '';
+        isIdentityValid = document.getElementById('inputIme').value.trim() !== '' && document.getElementById('inputPrezime').value.trim() !== '';
       } else {
-        const firmaVal = document.getElementById('inputNazivFirme').value.trim();
-        const kontaktVal = document.getElementById('inputKontaktOsoba').value.trim();
-        isIdentityValid = firmaVal !== '' && kontaktVal !== '';
+        isIdentityValid = document.getElementById('inputNazivFirme').value.trim() !== '' && document.getElementById('inputKontaktOsoba').value.trim() !== '';
       }
 
       btnSubmit.disabled = !(isConsentChecked && isIdentityValid && telVal !== '' && opcinaVal !== '' && mzVal !== '');
@@ -308,57 +402,142 @@
     document.getElementById('mkfKreditnaForma').addEventListener('input', validirajFormu);
     document.getElementById('mkfKreditnaForma').addEventListener('change', validirajFormu);
 
-    window.resetForma = function() {
-      document.getElementById('mkfKreditnaForma').reset();
-      document.getElementById('btnSubmit').disabled = true;
-      document.getElementById('btnSubmit').innerText = "POŠALJI KREDITNI UPIT →";
-      document.getElementById('mkfKreditnaForma').style.display = 'block';
-      document.getElementById('screenSuccess').style.display = 'none';
-      document.getElementById('selectMZ').disabled = true;
-    };
-
-    function normalizujTelefon(input) {
-      let tel = input.trim().replace(/\s+/g, '');
-      if (tel.startsWith('0')) tel = '+387' + tel.substring(1);
-      return tel;
-    }
-
+    // Slanje Forme u Firebase
     document.getElementById('mkfKreditnaForma').addEventListener('submit', async (e) => {
       e.preventDefault();
-
       const btnSubmit = document.getElementById('btnSubmit');
       btnSubmit.disabled = true;
       btnSubmit.innerText = "SLANJE U TOKU...";
 
-      const leadId = 'LEAD-' + Date.now().toString(36).toUpperCase();
-
-      const payload = {
-        leadId: leadId,
+      const leadData = {
+        leadId: 'LEAD-' + Date.now().toString(36).toUpperCase(),
         tipLica: trenutniTip,
         klijent: trenutniTip === 'fizicko'
           ? document.getElementById('inputIme').value + ' ' + document.getElementById('inputPrezime').value
           : document.getElementById('inputNazivFirme').value + ' (' + document.getElementById('inputKontaktOsoba').value + ')',
-        telefon: normalizujTelefon(document.getElementById('inputTelefon').value),
+        telefon: document.getElementById('inputTelefon').value,
         opcina: document.getElementById('selectOpcina').value,
-        mjesnaZajednica: document.getElementById('selectMZ').value || 'Nije odabrano',
+        mjesnaZajednica: document.getElementById('selectMZ').value || '-',
         iznos: document.getElementById('inputIznos').value + ' KM',
         svrha: document.getElementById('inputSvrhaVal').value,
-        saglasnostPrihvacena: true,
         datum: new Date().toLocaleString('bs-BA'),
-        vrijemePrihvata: new Date().toISOString(),
         crmSyncStatus: "SYNCHRONIZED"
       };
 
       try {
-        await addDoc(collection(db, "leadovi"), payload);
+        await addDoc(collection(db, "leadovi"), leadData);
         document.getElementById('mkfKreditnaForma').style.display = 'none';
         document.getElementById('screenSuccess').style.display = 'block';
       } catch (err) {
-        alert("Greška pri slanju upita: " + err.message);
+        alert("Greška: " + err.message);
         btnSubmit.disabled = false;
         btnSubmit.innerText = "POŠALJI KREDITNI UPIT →";
       }
     });
+
+    document.getElementById('btnNoviUpit').addEventListener('click', () => {
+      document.getElementById('mkfKreditnaForma').reset();
+      document.getElementById('mkfKreditnaForma').style.display = 'block';
+      document.getElementById('screenSuccess').style.display = 'none';
+      document.getElementById('selectMZ').disabled = true;
+      validirajFormu();
+    });
+
+    // ADMIN MODAL LOGIKA
+    const modal = document.getElementById('adminModal');
+    document.getElementById('openAdminTrigger').addEventListener('click', () => modal.style.display = 'flex');
+    document.getElementById('btnCloseAdmin').addEventListener('click', () => modal.style.display = 'none');
+
+    document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      try {
+        await signInWithEmailAndPassword(auth, document.getElementById('adminEmail').value, document.getElementById('adminPass').value);
+      } catch (err) {
+        alert("Neispravni podaci za prijavu!");
+      }
+    });
+
+    document.getElementById('btnLogout').addEventListener('click', () => signOut(auth));
+
+    // NOVA KAMPANJA (DODAVANJE U BAZU)
+    document.getElementById('formNovaKampanja').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      try {
+        await addDoc(collection(db, "kampanje"), {
+          naziv: document.getElementById('newNaziv').value,
+          proizvod: document.getElementById('newProizvod').value,
+          kanal: document.getElementById('newKanal').value,
+          status: document.getElementById('newStatus').value,
+          datumPocetak: document.getElementById('newPocetak').value,
+          datumKraj: document.getElementById('newKraj').value
+        });
+        alert("Kampanja kreirana!");
+        e.target.reset();
+        ucitajAdminData();
+      } catch (err) {
+        alert("Greška: " + err.message);
+      }
+    });
+
+    // AUTH STATE CHECK
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        document.getElementById('adminLoginView').style.display = 'none';
+        document.getElementById('adminDashboardView').style.display = 'block';
+        document.getElementById('btnLogout').style.display = 'inline-block';
+        ucitajAdminData();
+      } else {
+        document.getElementById('adminLoginView').style.display = 'block';
+        document.getElementById('adminDashboardView').style.display = 'none';
+        document.getElementById('btnLogout').style.display = 'none';
+      }
+    });
+
+    async function ucitajAdminData() {
+      // Učitaj Leadove
+      try {
+        const queryL = await getDocs(collection(db, "leadovi"));
+        const tbodyL = document.getElementById('tabelaLeadova');
+        tbodyL.innerHTML = queryL.empty ? '<tr><td colspan="8" style="text-align:center;">Nema upita.</td></tr>' : '';
+        
+        queryL.forEach(doc => {
+          const l = doc.data();
+          tbodyL.innerHTML += `
+            <tr>
+              <td><b>${l.leadId || '-'}</b></td>
+              <td><b>${l.klijent || '-'}</b></td>
+              <td>${l.telefon || '-'}</td>
+              <td>${l.opcina || '-'}</td>
+              <td>${l.mjesnaZajednica || '-'}</td>
+              <td><b>${l.iznos || '-'}</b></td>
+              <td>${l.svrha || '-'}</td>
+              <td><span class="badge badge-active">${l.crmSyncStatus || 'SYNCHRONIZED'}</span></td>
+            </tr>
+          `;
+        });
+
+        // Učitaj Kampanje
+        const queryK = await getDocs(collection(db, "kampanje"));
+        const tbodyK = document.getElementById('tabelaKampanja');
+        tbodyK.innerHTML = queryK.empty ? '<tr><td colspan="5" style="text-align:center;">Nema kampanja.</td></tr>' : '';
+        
+        queryK.forEach(doc => {
+          const k = doc.data();
+          tbodyK.innerHTML += `
+            <tr>
+              <td><b>${doc.id}</b></td>
+              <td><b>${k.naziv}</b><br><small style="color:#0066b2;">🎯 ${k.proizvod}</small></td>
+              <td>${k.kanal}</td>
+              <td><span class="badge ${k.status === 'Objavljena' ? 'badge-active' : 'badge-inactive'}">${k.status}</span></td>
+              <td>${k.datumPocetak} do ${k.datumKraj}</td>
+            </tr>
+          `;
+        });
+
+      } catch (err) {
+        console.error("Greška pri učitavanju:", err);
+      }
+    }
   </script>
 </body>
 </html>
