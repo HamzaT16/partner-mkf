@@ -3,50 +3,147 @@
 <head>
   <meta charset="UTF-8">
   <title>Admin Panel - Partner MKF</title>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
+    * { box-sizing: border-box; }
     body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f1f5f9; padding: 30px; margin: 0; color: #0f172a; }
     .card { background: white; padding: 24px; border-radius: 16px; max-width: 400px; margin: 80px auto; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-    h2, h3 { color: #0066b2; margin-top: 0; }
-    input, button { width: 100%; padding: 12px; margin-top: 10px; border-radius: 8px; border: 1px solid #cbd5e1; box-sizing: border-box; font-size: 14px; }
-    button { background: #0066b2; color: white; border: none; font-weight: bold; cursor: pointer; transition: 0.2s; }
+    h2, h3, h4 { color: #0066b2; margin-top: 0; }
+    input, select, button { width: 100%; padding: 12px; margin-top: 6px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 14px; }
+    button { background: #0066b2; color: white; border: none; font-weight: bold; cursor: pointer; }
     button:hover { background: #005599; }
     .btn-logout { background: #fee2e2; color: #991b1b; width: auto; padding: 8px 16px; border: 1px solid #fca5a5; float: right; margin-bottom: 20px;}
     .btn-logout:hover { background: #fca5a5; }
-    table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-    th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
-    th { background: #0066b2; color: white; text-transform: uppercase; font-size: 12px; font-weight: 700;}
+    
+    .admin-container { max-width: 1150px; margin: 0 auto; display: none; }
+    .admin-form-card { background: white; border: 1px solid #e2e8f0; padding: 20px; border-radius: 12px; margin-bottom: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+    
+    .mkf-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .mkf-field { display: flex; flex-direction: column; margin-bottom: 12px; }
+    .mkf-field label { font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase; }
+
+    table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 30px; }
+    th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #e2e8f0; font-size: 13px; }
+    th { background: #0066b2; color: white; text-transform: uppercase; font-size: 11px; font-weight: 700; }
+    
+    .badge { padding: 4px 8px; border-radius: 10px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+    .badge-active { background: #dcfce7; color: #15803d; }
+    .badge-inactive { background: #fee2e2; color: #991b1b; }
+    .badge-sync { background: #e0f2fe; color: #0369a1; }
+
+    .btn-action { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 6px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; color: #334155; width: auto; display: inline-block; }
   </style>
 </head>
 <body>
 
-  <!-- Ekran za Prijavu -->
+  <!-- PRIJAVA NA ADMIN PANEL -->
   <div id="loginSection" class="card">
     <h2>🔑 Admin Prijava</h2>
     <form id="loginForm">
-      <input type="email" id="email" placeholder="Email adresa" required>
-      <input type="password" id="pass" placeholder="Lozinka" required>
-      <button type="submit">PRIJAVI SE</button>
+      <div class="mkf-field">
+        <label>Email adresa</label>
+        <input type="email" id="email" placeholder="admin@partner.ba" required>
+      </div>
+      <div class="mkf-field">
+        <label>Lozinka</label>
+        <input type="password" id="pass" placeholder="******" required>
+      </div>
+      <button type="submit" style="margin-top: 15px;">PRIJAVI SE</button>
     </form>
   </div>
 
-  <!-- Zaštićeni Dashboard -->
-  <div id="dashboardSection" style="display:none; max-width: 1000px; margin: 0 auto;">
+  <!-- ADMIN DASHBOARD -->
+  <div id="dashboardSection" class="admin-container">
     <button id="btnLogout" class="btn-logout">🚪 Odjavi se</button>
-    <h2>⚙️ Zaprimljeni Upiti</h2>
-    
+    <h2>⚙️ Administracija</h2>
+
+    <!-- KAMPANJE FORMA -->
+    <div class="admin-form-card">
+      <h4 id="formTitle">➕ Kreiraj novu kampanjsku formu</h4>
+      <form id="formNovaKampanja">
+        <div class="mkf-grid2">
+          <div class="mkf-field">
+            <label>Naziv Kampanje *</label>
+            <input type="text" id="newNaziv" placeholder="npr. Viber Agro Kampanja" required>
+          </div>
+          <div class="mkf-field">
+            <label>Targetirani Proizvod / Svrha *</label>
+            <select id="newProizvod">
+              <option value="SVI">Svi proizvodi (Korisnik sam bira)</option>
+              <option value="ESG / Energetska efikasnost">Energetska efikasnost</option>
+              <option value="Obratna sredstva / Biznis">Obratna sredstva / Biznis</option>
+              <option value="Poljoprivreda">Poljoprivreda</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="mkf-grid2">
+          <div class="mkf-field">
+            <label>Kanal *</label>
+            <select id="newKanal">
+              <option value="Svi kanali">Svi kanali</option>
+              <option value="Facebook">Facebook</option>
+              <option value="Viber">Viber</option>
+              <option value="Instagram">Instagram</option>
+              <option value="Google">Google</option>
+            </select>
+          </div>
+          <div class="mkf-field">
+            <label>Status *</label>
+            <select id="newStatus">
+              <option value="Objavljena">Objavljena</option>
+              <option value="Neaktivna">Neaktivna</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="mkf-grid2">
+          <div class="mkf-field">
+            <label>Datum Početka *</label>
+            <input type="date" id="newPocetak" required>
+          </div>
+          <div class="mkf-field">
+            <label>Datum Završetka *</label>
+            <input type="date" id="newKraj" required>
+          </div>
+        </div>
+
+        <button type="submit" style="margin-top: 10px;">SAČUVAJ KAMPANJU</button>
+      </form>
+    </div>
+
+    <h3>📋 Pregled Kampanja</h3>
     <table>
       <thead>
         <tr>
+          <th>ID</th>
+          <th>Naziv / Proizvod</th>
+          <th>Kanal</th>
+          <th>Status</th>
+          <th>Period važenja</th>
+        </tr>
+      </thead>
+      <tbody id="tabelaKampanja">
+        <!-- Kampanje učitane iz baze -->
+      </tbody>
+    </table>
+
+    <h3>📤 Zaprimljeni Upiti (Leadovi)</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Lead ID</th>
           <th>Klijent</th>
-          <th>Telefon</th>
+          <th>Broj Telefona</th>
+          <th>Općina</th>
+          <th>Mjesna Zajednica</th>
           <th>Iznos</th>
           <th>Svrha</th>
-          <th>Datum i Vrijeme</th>
+          <th>Status</th>
         </tr>
       </thead>
       <tbody id="tabelaLeadova">
-        <tr><td colspan="5" style="text-align:center; padding: 20px;">Učitavanje podataka...</td></tr>
+        <tr><td colspan="8" style="text-align:center;">Učitavanje podataka...</td></tr>
       </tbody>
     </table>
   </div>
@@ -54,9 +151,8 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // Tvoj stvarni Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyDSd7z4bIMcvAywJiot_Kii4XwsNbD4U-U",
       authDomain: "mkf-partner-app.firebaseapp.com",
@@ -81,43 +177,83 @@
     });
 
     // Odjava
-    document.getElementById('btnLogout').addEventListener('click', () => {
-        signOut(auth);
-        document.getElementById('tabelaLeadova').innerHTML = '<tr><td colspan="5" style="text-align:center;">Učitavanje podataka...</td></tr>';
+    document.getElementById('btnLogout').addEventListener('click', () => signOut(auth));
+
+    // Nova Kampanja
+    document.getElementById('formNovaKampanja').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      try {
+        await addDoc(collection(db, "kampanje"), {
+          naziv: document.getElementById('newNaziv').value,
+          proizvod: document.getElementById('newProizvod').value,
+          kanal: document.getElementById('newKanal').value,
+          status: document.getElementById('newStatus').value,
+          datumPocetak: document.getElementById('newPocetak').value,
+          datumKraj: document.getElementById('newKraj').value
+        });
+        alert("Kampanja uspješno dodana!");
+        e.target.reset();
+        ucitajPodatke();
+      } catch (err) {
+        alert("Greška pri kreiranju kampanje: " + err.message);
+      }
     });
 
-    // Provjera statusa
-    onAuthStateChanged(auth, async (user) => {
+    async function ucitajPodatke() {
+      // Učitaj Leadove
+      const queryLeadovi = await getDocs(collection(db, "leadovi"));
+      const tbodyL = document.getElementById('tabelaLeadova');
+      tbodyL.innerHTML = "";
+
+      if (queryLeadovi.empty) {
+        tbodyL.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:15px; color:#94a3b8;">Nema zaprimljenih upita.</td></tr>';
+      } else {
+        queryLeadovi.forEach((doc) => {
+          const l = doc.data();
+          tbodyL.innerHTML += `
+            <tr>
+              <td><b>${l.leadId || '-'}</b></td>
+              <td><b>${l.klijent || '-'}</b></td>
+              <td>${l.telefon || '-'}</td>
+              <td>${l.opcina || '-'}</td>
+              <td>${l.mjesnaZajednica || '-'}</td>
+              <td><b>${l.iznos || '-'}</b></td>
+              <td>${l.svrha || '-'}</td>
+              <td><span class="badge badge-active">${l.crmSyncStatus || 'SYNCHRONIZED'}</span></td>
+            </tr>
+          `;
+        });
+      }
+
+      // Učitaj Kampanje
+      const queryKampanje = await getDocs(collection(db, "kampanje"));
+      const tbodyK = document.getElementById('tabelaKampanja');
+      tbodyK.innerHTML = "";
+
+      if (queryKampanje.empty) {
+        tbodyK.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:15px; color:#94a3b8;">Nema kreiranih kampanja.</td></tr>';
+      } else {
+        queryKampanje.forEach((doc) => {
+          const k = doc.data();
+          const jeAktivna = k.status === 'Objavljena';
+          tbodyK.innerHTML += `
+            <tr>
+              <td><b>${doc.id}</b></td>
+              <td><b>${k.naziv}</b><br><small style="color:#0066b2;">🎯 ${k.proizvod}</small></td>
+              <td>${k.kanal}</td>
+              <td><span class="badge ${jeAktivna ? 'badge-active' : 'badge-inactive'}">${k.status}</span></td>
+              <td>${k.datumPocetak} do ${k.datumKraj}</td>
+            </tr>
+          `;
+        });
+      }
+    }
+
+    onAuthStateChanged(auth, (user) => {
       if (user) {
         document.getElementById('loginSection').style.display = 'none';
         document.getElementById('dashboardSection').style.display = 'block';
-
-        // Dohvatanje podataka iz baze samo ako je korisnik logovan
-        try {
-          const querySnapshot = await getDocs(collection(db, "leadovi"));
-          const tbody = document.getElementById('tabelaLeadova');
-          tbody.innerHTML = "";
-
-          if (querySnapshot.empty) {
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#94a3b8; padding: 20px;">Trenutno nema zaprimljenih upita.</td></tr>';
-            return;
-          }
-
-          querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            tbody.innerHTML += `
-              <tr>
-                <td><b>${data.klijent || '-'}</b></td>
-                <td>${data.telefon || '-'}</td>
-                <td><b>${data.iznos || '-'}</b></td>
-                <td>${data.svrha || '-'}</td>
-                <td><small>${data.datum || '-'}</small></td>
-              </tr>
-            `;
-          });
-        } catch (err) {
-          alert("Greška pri dohvaćanju podataka: " + err.message);
-        }
+        ucitajPodatke();
       } else {
         document.getElementById('loginSection').style.display = 'block';
         document.getElementById('dashboardSection').style.display = 'none';
