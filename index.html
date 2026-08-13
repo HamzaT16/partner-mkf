@@ -26,21 +26,6 @@
       box-shadow: 0 2px 10px rgba(0,0,0,0.03);
     }
     .app-logo { font-weight: 800; color: #0066b2; font-size: 18px; letter-spacing: 1px; }
-    
-    .btn-admin-topbar {
-      background: #f1f5f9;
-      border: 1px solid #cbd5e1;
-      padding: 8px 14px;
-      border-radius: 8px;
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      color: #334155;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .btn-admin-topbar:hover { background: #e2e8f0; }
 
     .app-container { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
 
@@ -122,8 +107,8 @@
     }
     .admin-modal-content {
       background: #ffffff;
-      width: 90%;
-      max-width: 1050px;
+      width: 95%;
+      max-width: 1150px;
       max-height: 90vh;
       border-radius: 20px;
       overflow-y: auto;
@@ -131,7 +116,7 @@
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     }
     .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 15px; margin-bottom: 20px; }
-    .btn-close { background: transparent; border: none; font-size: 20px; cursor: pointer; color: #64748b; }
+    .btn-close { background: transparent; border: none; font-size: 20px; cursor: pointer; color: #64748b; font-weight: bold; }
 
     /* DUGME ZA ODJAVU */
     .btn-logout {
@@ -143,7 +128,7 @@
       font-size: 12px;
       font-weight: 700;
       cursor: pointer;
-      display: none; /* Prikazuje se samo kad je admin prijavljen */
+      display: none;
     }
     .btn-logout:hover { background: #fecaca; }
 
@@ -151,7 +136,7 @@
     table { width: 100%; border-collapse: collapse; margin-top: 12px; }
     th, td { text-align: left; padding: 10px; border-bottom: 1px solid #e2e8f0; font-size: 12.5px; }
     th { color: #64748b; font-size: 11px; text-transform: uppercase; background: #f8fafc; }
-    .badge { padding: 4px 8px; border-radius: 10px; font-size: 11px; font-weight: 700; }
+    .badge { padding: 4px 8px; border-radius: 10px; font-size: 11px; font-weight: 700; white-space: nowrap; }
     .badge-active { background: #dcfce7; color: #15803d; }
     .badge-inactive { background: #fee2e2; color: #991b1b; }
     .badge-sync { background: #e0f2fe; color: #0369a1; }
@@ -180,7 +165,6 @@
   <!-- TOPBAR -->
   <div class="app-topbar">
     <div class="app-logo">PARTNER MKF</div>
-    <button class="btn-admin-topbar" onclick="otvoriAdminModal()">⚙️ Admin Panel</button>
   </div>
 
   <div class="app-container">
@@ -224,11 +208,11 @@
         <div class="mkf-grid2" id="fieldsFizicko">
           <div class="mkf-field">
             <label>Ime *</label>
-            <input type="text" id="inputIme" class="mkf-input" placeholder="Unesite ime">
+            <input type="text" id="inputIme" class="mkf-input" placeholder="Unesite ime" required>
           </div>
           <div class="mkf-field">
             <label>Prezime *</label>
-            <input type="text" id="inputPrezime" class="mkf-input" placeholder="Unesite prezime">
+            <input type="text" id="inputPrezime" class="mkf-input" placeholder="Unesite prezime" required>
           </div>
         </div>
 
@@ -261,8 +245,8 @@
             </select>
           </div>
           <div class="mkf-field">
-            <label>Mjesna zajednica</label>
-            <select id="selectMZ" class="mkf-select" disabled>
+            <label>Mjesna zajednica *</label>
+            <select id="selectMZ" class="mkf-select" disabled required>
               <option value="" disabled selected>Prvo izaberite općinu</option>
             </select>
           </div>
@@ -302,13 +286,13 @@
   </div>
 
   <!-- ADMIN PANEL MODAL -->
-  <div class="modal-overlay" id="adminModal">
-    <div class="admin-modal-content">
+  <div class="modal-overlay" id="adminModal" onclick="skliknutoVanModala(event)">
+    <div class="admin-modal-content" onclick="event.stopPropagation()">
       <div class="modal-header">
         <h2 style="margin:0; color:#0066b2;">⚙️ Administracija</h2>
         <div style="display: flex; gap: 10px; align-items: center;">
-          <button id="btnLogout" class="btn-logout" onclick="odjaviAdmina()">🚪 Odjavi se</button>
-          <button class="btn-close" onclick="zatvoriAdminModal()">✖</button>
+          <button id="btnLogout" class="btn-logout" onclick="zatvoriIOdjaviAdmina()">🚪 Odjavi se</button>
+          <button class="btn-close" onclick="zatvoriIOdjaviAdmina()">✖</button>
         </div>
       </div>
 
@@ -326,7 +310,7 @@
         </form>
       </div>
 
-      <!-- DASHBOARD (PRIKAZUJE SE SAMO KAD JE ADMIN AUTENTIFICIRAN) -->
+      <!-- DASHBOARD -->
       <div id="adminDashboardView" style="display: none;">
         
         <!-- FORMA ZA KREIRANJE I EDITOVANJE KAMPANJA -->
@@ -353,6 +337,7 @@
               <div class="mkf-field">
                 <label>Kanal *</label>
                 <select id="newKanal" class="mkf-select">
+                  <option value="Svi kanali">Svi kanali</option>
                   <option value="Facebook">Facebook</option>
                   <option value="Viber">Viber</option>
                   <option value="Instagram">Instagram</option>
@@ -408,9 +393,12 @@
             <tr>
               <th>Lead ID</th>
               <th>ID Kampanje</th>
-              <th>Klijent / Tel</th>
-              <th>Lokacija (Općina/MZ)</th>
-              <th>Iznos / Svrha</th>
+              <th>Klijent</th>
+              <th>Broj Telefona</th>
+              <th>Općina</th>
+              <th>Mjesna Zajednica</th>
+              <th>Iznos</th>
+              <th>Svrha</th>
               <th>CRM API Status</th>
             </tr>
           </thead>
@@ -422,11 +410,9 @@
   </div>
 
   <script>
-    // SHA-256 Hashevi (Korisničko ime i lozinka: admin / admin)
     const ADMIN_USER_HASH = "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918";
     const ADMIN_PASS_HASH = "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918";
 
-    // STANJE SESIJE (Čuva se samo u memoriji, poništava se nakon zatvaranja/odjave)
     let isAdminAutentificiran = false;
 
     async function izracunajHash(str) {
@@ -449,7 +435,7 @@
         id: "1",
         naziv: "Opšta Kampanja (Svi proizvodi)",
         proizvod: "SVI",
-        kanal: "Facebook",
+        kanal: "Svi kanali",
         status: "Objavljena",
         datumPocetak: "2026-01-01",
         datumKraj: "2026-12-31"
@@ -472,6 +458,14 @@
     let editingKampanjaId = null;
 
     function inicijalizujStranicu() {
+      const path = window.location.pathname.toLowerCase();
+      const hash = window.location.hash.toLowerCase();
+      const search = window.location.search.toLowerCase();
+
+      if (path.endsWith('/admin') || hash === '#admin' || search.includes('admin')) {
+        otvoriAdminModal();
+      }
+
       const urlParams = new URLSearchParams(window.location.search);
       let rawId = urlParams.get('id') || urlParams.get('kampanja_id') || '1';
       const cleanId = String(rawId).replace(/[^0-9]/g, '') || '1';
@@ -546,6 +540,11 @@
     document.getElementById('mkfKreditnaForma').addEventListener('submit', async (e) => {
       e.preventDefault();
 
+      if (!document.getElementById('checkConsent').checked) {
+        alert('Morate prihvatiti saglasnost za obradu podataka da biste poslali upit.');
+        return;
+      }
+
       if (trenutniTip === 'fizicko') {
         if (!document.getElementById('inputIme').value.trim() || !document.getElementById('inputPrezime').value.trim()) {
           alert('Molimo unesite Ime i Prezime.');
@@ -571,13 +570,13 @@
         tipLica: trenutniTip,
         klijent: trenutniTip === 'fizicko'
           ? document.getElementById('inputIme').value + ' ' + document.getElementById('inputPrezime').value
-          : document.getElementById('inputNazivFirme').value + ' (Kontakt: ' + document.getElementById('inputKontaktOsoba').value + ')',
+          : document.getElementById('inputNazivFirme').value + ' (' + document.getElementById('inputKontaktOsoba').value + ')',
         telefon: normalizujTelefon(document.getElementById('inputTelefon').value),
         opcina: document.getElementById('selectOpcina').value,
         mjesnaZajednica: document.getElementById('selectMZ').value || 'Nije odabrano',
         iznos: document.getElementById('inputIznos').value + ' KM',
         svrha: document.getElementById('inputSvrhaVal').value,
-        saglasnostPrihvacena: document.getElementById('checkConsent').checked,
+        saglasnostPrihvacena: true,
         saglasnostVerzija: "v2.0-2026",
         vrijemePrihvata: new Date().toISOString(),
         crmSyncStatus: "PENDING"
@@ -613,8 +612,15 @@
       }
     }
     
-    function zatvoriAdminModal() { 
-      document.getElementById('adminModal').style.display = 'none'; 
+    function skliknutoVanModala(event) {
+      if (event.target.id === 'adminModal') {
+        zatvoriIOdjaviAdmina();
+      }
+    }
+
+    function zatvoriIOdjaviAdmina() {
+      odjaviAdmina();
+      document.getElementById('adminModal').style.display = 'none';
     }
 
     async function prijaviAdmina(e) {
@@ -629,7 +635,6 @@
       if (userHash === ADMIN_USER_HASH && passHash === ADMIN_PASS_HASH) {
         isAdminAutentificiran = true;
         
-        // Praznjenje polja za prijavu iz sigurnosnih razloga
         document.getElementById('adminUser').value = '';
         document.getElementById('adminPass').value = '';
 
@@ -644,20 +649,15 @@
     }
 
     function odjaviAdmina() {
-      // 1. Poništavanje sesije
       isAdminAutentificiran = false;
 
-      // 2. Čišćenje formi
       document.getElementById('adminUser').value = '';
       document.getElementById('adminPass').value = '';
       otkaziUredjivanje();
 
-      // 3. Prebacivanje prikaza na login ekran
       document.getElementById('adminDashboardView').style.display = 'none';
       document.getElementById('adminLoginView').style.display = 'block';
       document.getElementById('btnLogout').style.display = 'none';
-
-      alert('Uspješno ste se odjavili sa Admin Panela.');
     }
 
     function pokreniUredjivanje(id) {
@@ -668,7 +668,7 @@
       document.getElementById('formTitle').innerText = `✏️ Uredi kampanju ID: ${k.id}`;
       document.getElementById('newNaziv').value = k.naziv;
       document.getElementById('newProizvod').value = k.proizvod || 'SVI';
-      document.getElementById('newKanal').value = k.kanal;
+      document.getElementById('newKanal').value = k.kanal || 'Svi kanali';
       document.getElementById('newStatus').value = k.status;
       document.getElementById('newPocetak').value = k.datumPocetak;
       document.getElementById('newKraj').value = k.datumKraj;
@@ -744,7 +744,7 @@
           <tr>
             <td><b>${k.id}</b></td>
             <td><b>${k.naziv}</b><br><small style="color:#0066b2;">🎯 ${pNaziv}</small></td>
-            <td>${k.kanal}</td>
+            <td>${k.kanal || 'Svi kanali'}</td>
             <td><span class="badge ${jeAktivna ? 'badge-active' : 'badge-inactive'}">${jeAktivna ? 'Aktivna' : 'Neaktivna'}</span></td>
             <td>${k.datumPocetak} do ${k.datumKraj}</td>
             <td>
@@ -764,7 +764,7 @@
 
       const leadovi = JSON.parse(localStorage.getItem('app_crm_leadovi') || '[]');
       const tbodyL = document.getElementById('tabelaLeadova');
-      tbodyL.innerHTML = leadovi.length === 0 ? '<tr><td colspan="6" style="text-align:center; color:#94a3b8;">Nema zaprimljenih upita.</td></tr>' : '';
+      tbodyL.innerHTML = leadovi.length === 0 ? '<tr><td colspan="9" style="text-align:center; color:#94a3b8;">Nema zaprimljenih upita.</td></tr>' : '';
 
       leadovi.slice().reverse().forEach(l => {
         const isSync = l.crmSyncStatus === 'SYNCHRONIZED';
@@ -773,9 +773,12 @@
           <tr>
             <td><b>${l.leadId}</b></td>
             <td><span class="badge badge-sync">Kampanja ${cleanKampanjaId}</span></td>
-            <td>${l.klijent}<br><small>${l.telefon}</small></td>
-            <td><b>${l.opcina}</b><br><small>MZ: ${l.mjesnaZajednica || 'Nije navedeno'}</small></td>
-            <td><b>${l.iznos}</b><br><small>${l.svrha}</small></td>
+            <td><b>${l.klijent}</b></td>
+            <td>${l.telefon}</td>
+            <td>${l.opcina}</td>
+            <td>${l.mjesnaZajednica || '-'}</td>
+            <td><b>${l.iznos}</b></td>
+            <td>${l.svrha}</td>
             <td>
               <span class="badge ${isSync ? 'badge-active' : 'badge-pending'}">
                 ${isSync ? 'SENT TO CRM API' : 'QUEUED (RETRY)'}
@@ -790,8 +793,15 @@
       trenutniTip = tip;
       document.getElementById('btnFizicko').classList.toggle('active', tip === 'fizicko');
       document.getElementById('btnPravno').classList.toggle('active', tip === 'pravno');
-      document.getElementById('fieldsFizicko').style.display = tip === 'fizicko' ? 'grid' : 'none';
-      document.getElementById('fieldsPravno').style.display = tip === 'pravno' ? 'grid' : 'none';
+      
+      const isFizicko = tip === 'fizicko';
+      document.getElementById('fieldsFizicko').style.display = isFizicko ? 'grid' : 'none';
+      document.getElementById('fieldsPravno').style.display = isFizicko ? 'none' : 'grid';
+
+      document.getElementById('inputIme').required = isFizicko;
+      document.getElementById('inputPrezime').required = isFizicko;
+      document.getElementById('inputNazivFirme').required = !isFizicko;
+      document.getElementById('inputKontaktOsoba').required = !isFizicko;
     }
 
     function resetForma() {
