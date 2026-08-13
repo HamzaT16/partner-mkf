@@ -10,67 +10,77 @@
     body { background-color: #f1f5f9; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; margin: 0; padding: 0; color: #0f172a; }
 
     /* TOPBAR */
-    .app-topbar { background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 14px 28px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
+    .app-topbar { background: #ffffff; border-bottom: 1px solid #e2e8f0; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.03); flex-wrap: wrap; gap: 10px; }
     .app-logo { font-weight: 800; color: #0066b2; font-size: 18px; letter-spacing: 1px; }
 
-    .app-container { max-width: 1100px; margin: 30px auto; padding: 0 20px; }
+    /* FLEKSIBILNI KONTEJNER */
+    .app-container { width: 100%; max-width: 1100px; margin: 20px auto; padding: 0 15px; }
 
-    /* FORMA STILOVI */
-    .mkf-form-wrapper { max-width: 520px; margin: 0 auto; padding: 32px; background: #ffffff; border: 1px solid rgba(226, 232, 240, 0.8); border-radius: 24px; box-shadow: 0 20px 40px -15px rgba(0, 102, 178, 0.08); }
-    .mkf-header { text-align: center; margin-bottom: 24px; }
-    .mkf-header h2 { margin: 0 0 8px 0; color: #0066b2; font-size: 22px; }
-    .mkf-header p { margin: 0; font-size: 13.5px; color: #64748b; }
-
-    .mkf-toggle { display: flex; background: #f8fafc; padding: 5px; border-radius: 14px; margin-bottom: 20px; }
-    .mkf-toggle-btn { flex: 1; padding: 11px; font-size: 13.5px; font-weight: 700; border: none; border-radius: 10px; cursor: pointer; background: transparent; color: #64748b; }
-    .mkf-toggle-btn.active { background: #ffffff; color: #0066b2; box-shadow: 0 4px 12px rgba(0, 102, 178, 0.12); }
+    /* FLEKSIBILNA FORMA */
+    .mkf-form-wrapper { width: 100%; max-width: 520px; margin: 0 auto; padding: 24px; background: #ffffff; border: 1px solid rgba(226, 232, 240, 0.8); border-radius: 20px; box-shadow: 0 20px 40px -15px rgba(0, 102, 178, 0.08); }
     
-    .mkf-amount-card { background: linear-gradient(135deg, #f0f7ff 0%, #e0f2fe 100%); border-radius: 18px; padding: 18px; text-align: center; margin-bottom: 20px; border: 1px solid #bae6fd; }
-    .mkf-amount-val { font-size: 34px; font-weight: 800; color: #0066b2; }
+    @media (max-width: 480px) {
+      .mkf-form-wrapper { padding: 16px; border-radius: 16px; }
+    }
+
+    .mkf-header { text-align: center; margin-bottom: 20px; }
+    .mkf-header h2 { margin: 0 0 8px 0; color: #0066b2; font-size: 20px; }
+    .mkf-header p { margin: 0; font-size: 13px; color: #64748b; }
+
+    .mkf-toggle { display: flex; background: #f8fafc; padding: 4px; border-radius: 12px; margin-bottom: 20px; }
+    .mkf-toggle-btn { flex: 1; padding: 10px; font-size: 13px; font-weight: 700; border: none; border-radius: 8px; cursor: pointer; background: transparent; color: #64748b; transition: all 0.2s ease; }
+    .mkf-toggle-btn.active { background: #ffffff; color: #0066b2; box-shadow: 0 2px 8px rgba(0, 102, 178, 0.12); }
+    
+    .mkf-amount-card { background: linear-gradient(135deg, #f0f7ff 0%, #e0f2fe 100%); border-radius: 16px; padding: 16px; text-align: center; margin-bottom: 20px; border: 1px solid #bae6fd; }
+    .mkf-amount-val { font-size: 30px; font-weight: 800; color: #0066b2; }
     .mkf-slider { width: 100%; margin-top: 10px; accent-color: #0066b2; cursor: pointer; }
 
-    .mkf-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .mkf-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
-    .mkf-field label { font-size: 11.5px; font-weight: 700; color: #475569; text-transform: uppercase; }
-    .mkf-input, .mkf-select { width: 100%; padding: 12px; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 10px; font-weight: 500; outline: none; }
+    /* FLEKSIBILNI GRID ZA POLJA */
+    .mkf-grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+    .mkf-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+    .mkf-field label { font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase; }
+    .mkf-input, .mkf-select { width: 100%; padding: 11px; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 8px; font-weight: 500; outline: none; font-size: 13.5px; }
     .mkf-input:focus, .mkf-select:focus { border-color: #0066b2; background: #fff; }
 
-    /* SVRHA / PROIZVOD KREDITA */
-    .mkf-purpose-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 4px; }
-    .mkf-purpose-card { border: 1.5px solid #e2e8f0; background: #f8fafc; border-radius: 14px; padding: 12px 8px; text-align: center; cursor: pointer; transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; gap: 6px; }
-    .mkf-purpose-card .icon { font-size: 22px; }
-    .mkf-purpose-card .title { font-size: 11.5px; font-weight: 700; color: #475569; }
+    /* FLEKSIBILNA SVRHA / PROIZVOD */
+    .mkf-purpose-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; margin-top: 4px; }
+    .mkf-purpose-card { border: 1.5px solid #e2e8f0; background: #f8fafc; border-radius: 12px; padding: 10px 6px; text-align: center; cursor: pointer; transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .mkf-purpose-card .icon { font-size: 20px; }
+    .mkf-purpose-card .title { font-size: 11px; font-weight: 700; color: #475569; }
     .mkf-purpose-card:hover { border-color: #93c5fd; background: #f0f7ff; }
-    .mkf-purpose-card.selected { border-color: #0066b2; background: #f0f7ff; box-shadow: 0 4px 12px rgba(0, 102, 178, 0.12); }
+    .mkf-purpose-card.selected { border-color: #0066b2; background: #f0f7ff; box-shadow: 0 2px 8px rgba(0, 102, 178, 0.12); }
     .mkf-purpose-card.selected .title { color: #0066b2; }
     .mkf-purpose-card.disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; filter: grayscale(1); }
     
-    .mkf-btn-submit { width: 100%; padding: 16px; background: #0066b2; color: #fff; border: none; border-radius: 12px; font-weight: 800; font-size: 14px; cursor: pointer; text-transform: uppercase; margin-top: 10px; transition: all 0.2s ease; }
+    .mkf-btn-submit { width: 100%; padding: 14px; background: #0066b2; color: #fff; border: none; border-radius: 10px; font-weight: 800; font-size: 13.5px; cursor: pointer; text-transform: uppercase; margin-top: 10px; transition: all 0.2s ease; }
     .mkf-btn-submit:disabled { background: #cbd5e1; color: #94a3b8; cursor: not-allowed; opacity: 0.7; }
 
-    /* PORUKE I EKRANI */
+    /* STATUSI */
     .status-card { text-align: center; padding: 20px; display: none; }
-    .status-icon { font-size: 48px; margin-bottom: 12px; }
-    .status-title { font-size: 20px; font-weight: 800; color: #0f172a; margin-bottom: 8px; }
-    .status-desc { font-size: 14px; color: #64748b; margin-bottom: 20px; }
+    .status-icon { font-size: 40px; margin-bottom: 10px; }
+    .status-title { font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 8px; }
+    .status-desc { font-size: 13.5px; color: #64748b; margin-bottom: 18px; }
 
-    /* ADMIN MODAL */
-    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 1000; }
-    .admin-modal-content { background: #ffffff; width: 98%; max-width: 1250px; max-height: 92vh; border-radius: 20px; overflow-y: auto; padding: 30px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
-    .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 15px; margin-bottom: 20px; }
-    .btn-close { background: transparent; border: none; font-size: 20px; cursor: pointer; color: #64748b; font-weight: bold; }
-    .btn-logout { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; display: none; }
+    /* ADMIN MODAL FLEKSIBILNOST */
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 10px; }
+    .admin-modal-content { background: #ffffff; width: 100%; max-width: 1250px; max-height: 94vh; border-radius: 16px; overflow-y: auto; padding: 20px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px; }
+    .btn-close { background: transparent; border: none; font-size: 22px; cursor: pointer; color: #64748b; font-weight: bold; }
+    .btn-logout { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; padding: 6px 12px; border-radius: 6px; font-size: 11.5px; font-weight: 700; cursor: pointer; }
 
-    /* TABELE U ADMINU */
-    table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+    /* RESPONZIVNE TABELE */
+    .table-responsive { width: 100%; overflow-x: auto; margin-top: 10px; border-radius: 8px; border: 1px solid #e2e8f0; }
+    table { width: 100%; border-collapse: collapse; min-width: 700px; }
     th, td { text-align: left; padding: 10px; border-bottom: 1px solid #e2e8f0; font-size: 12px; vertical-align: middle; }
     th { color: #64748b; font-size: 10.5px; text-transform: uppercase; background: #f8fafc; }
-    .badge { padding: 4px 8px; border-radius: 10px; font-size: 11px; font-weight: 700; white-space: nowrap; display: inline-block; }
+    .badge { padding: 3px 6px; border-radius: 8px; font-size: 10.5px; font-weight: 700; white-space: nowrap; display: inline-block; }
     .badge-active { background: #dcfce7; color: #15803d; }
     .badge-inactive { background: #fee2e2; color: #991b1b; }
     .btn-action { background: #f1f5f9; border: 1px solid #cbd5e1; padding: 5px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; color: #334155; margin-right: 2px; }
     .btn-action:hover { background: #e2e8f0; }
-    .admin-form-card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 16px; border-radius: 12px; margin-bottom: 24px; }
+    .btn-delete { background: #fef2f2; border-color: #fca5a5; color: #991b1b; }
+    .btn-delete:hover { background: #fee2e2; }
+    .admin-form-card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 16px; border-radius: 12px; margin-bottom: 20px; }
     .link-badge { font-family: monospace; background: #eff6ff; color: #1d4ed8; padding: 3px 6px; border-radius: 4px; font-size: 11px; border: 1px dashed #bfdbfe; }
   </style>
 </head>
@@ -84,20 +94,20 @@
 
   <div class="app-container">
 
-    <!-- FRONTEND KLIJENTSKA FORMA -->
+    <!-- FRONTEND FORMA -->
     <div class="mkf-form-wrapper">
 
       <div id="screenInactive" class="status-card">
         <div class="status-icon">⚠️</div>
         <div class="status-title">Kampanja više nije aktivna</div>
-        <div class="status-desc">Ova kreditna ponuda je onemogućena ili je istekla. Za više informacija posjetite našu stranicu.</div>
+        <div class="status-desc">Ova kreditna ponuda je onemogućena ili je istekla.</div>
         <a href="https://partner.ba" class="mkf-btn-submit" style="display:inline-block; text-decoration:none;">Idi na Partner.ba</a>
       </div>
 
       <div id="screenSuccess" class="status-card">
         <div class="status-icon">✅</div>
         <div class="status-title">Hvala vam! Vaš upit je zaprimljen.</div>
-        <div class="status-desc">Naš kreditni savjetnik će vas kontaktirati u najkraćem mogućem roku.</div>
+        <div class="status-desc">Naš kreditni savjetnik će vas kontaktirati u najkraćem roku.</div>
         <button class="mkf-btn-submit" id="btnNoviUpit">Novi kreditni upit</button>
       </div>
 
@@ -113,7 +123,7 @@
         </div>
 
         <div class="mkf-amount-card">
-          <div class="mkf-amount-val"><span id="txtIznos">5.000</span> <small style="font-size: 18px;">KM</small></div>
+          <div class="mkf-amount-val"><span id="txtIznos">5.000</span> <small style="font-size: 16px;">KM</small></div>
           <input type="range" min="450" max="10000" step="50" value="5000" class="mkf-slider" id="inputIznos">
         </div>
 
@@ -183,10 +193,10 @@
           <input type="hidden" id="inputSvrhaVal" value="ESG / Energetska efikasnost">
         </div>
 
-        <div class="mkf-field" style="margin-top: 10px;">
-          <label style="font-size: 11px; color: #64748b; text-transform: none; display: flex; gap: 8px; cursor: pointer;">
-            <input type="checkbox" id="checkConsent"> 
-            Saglasan/na sam da MKF Partner obrađuje moje podatke u svrhu obrade kreditnog zahtjeva.
+        <div class="mkf-field" style="margin-top: 6px;">
+          <label style="font-size: 11px; color: #64748b; text-transform: none; display: flex; gap: 8px; cursor: pointer; align-items: flex-start;">
+            <input type="checkbox" id="checkConsent" style="margin-top: 2px;"> 
+            <span>Saglasan/na sam da MKF Partner obrađuje moje podatke u svrhu obrade kreditnog zahtjeva.</span>
           </label>
         </div>
 
@@ -200,16 +210,16 @@
   <div class="modal-overlay" id="adminModal">
     <div class="admin-modal-content">
       <div class="modal-header">
-        <h2 style="margin:0; color:#0066b2;">⚙️ Administracija Kampanja i Leadova</h2>
+        <h3 style="margin:0; color:#0066b2;">⚙️ Administracija Kampanja i Leadova</h3>
         <div style="display: flex; gap: 10px; align-items: center;">
-          <button id="btnLogout" class="btn-logout">🚪 Odjavi se</button>
-          <button class="btn-close" id="btnCloseAdmin">✖</button>
+          <button id="btnLogout" class="btn-logout" style="display:none;">🚪 Odjavi se</button>
+          <button class="btn-close" id="btnCloseAdmin" title="Zatvori i odjavi se">✖</button>
         </div>
       </div>
 
       <!-- PRIJAVA -->
-      <div id="adminLoginView" style="max-width: 350px; margin: 40px auto; text-align: center;">
-        <h3 style="margin-bottom: 20px;">Prijava na Admin Panel</h3>
+      <div id="adminLoginView" style="max-width: 350px; margin: 30px auto; text-align: center;">
+        <h4 style="margin-bottom: 16px;">Prijava na Admin Panel</h4>
         <form id="adminLoginForm">
           <div class="mkf-field">
             <input type="email" id="adminEmail" class="mkf-input" placeholder="Admin Email" required>
@@ -276,50 +286,54 @@
               </div>
             </div>
 
-            <div style="display:flex; gap:10px;">
-              <button type="submit" class="mkf-btn-submit" id="btnSaveKampanja" style="padding: 10px;">SAČUVAJ KAMPANJU U BAZU</button>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+              <button type="submit" class="mkf-btn-submit" id="btnSaveKampanja" style="padding: 10px; flex:1; min-width: 200px;">SAČUVAJ KAMPANJU U BAZU</button>
               <button type="button" class="btn-action" id="btnCancelEdit" style="display:none; padding:10px;">Otkaži uređivanje</button>
             </div>
           </form>
         </div>
 
-        <h3 style="color: #0066b2; margin-top: 20px;">📋 Pregled Kampanja (Sa Analitikom)</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Naziv Kampanje</th>
-              <th>Proizvod</th>
-              <th>Kanal</th>
-              <th>Status</th>
-              <th>Period Važenja</th>
-              <th>Pregledi</th>
-              <th>Leadovi</th>
-              <th>Konverzija</th>
-              <th>Kratki Link</th>
-              <th>Akcije</th>
-            </tr>
-          </thead>
-          <tbody id="tabelaKampanja"></tbody>
-        </table>
+        <h4 style="color: #0066b2; margin-top: 20px; margin-bottom:5px;">📋 Pregled Kampanja (Sa Analitikom)</h4>
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Naziv Kampanje</th>
+                <th>Proizvod</th>
+                <th>Kanal</th>
+                <th>Status</th>
+                <th>Period Važenja</th>
+                <th>Pregledi</th>
+                <th>Leadovi</th>
+                <th>Konverzija</th>
+                <th>Kratki Link</th>
+                <th>Akcije</th>
+              </tr>
+            </thead>
+            <tbody id="tabelaKampanja"></tbody>
+          </table>
+        </div>
 
-        <h3 style="color: #0066b2; margin-top: 35px;">📤 Zaprimljeni Upiti (Leadovi)</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Lead ID</th>
-              <th>Kampanja ID</th>
-              <th>Klijent</th>
-              <th>Broj Telefona</th>
-              <th>Općina</th>
-              <th>Mjesna Zajednica</th>
-              <th>Iznos</th>
-              <th>Svrha</th>
-              <th>Status Sync-a</th>
-            </tr>
-          </thead>
-          <tbody id="tabelaLeadova"></tbody>
-        </table>
+        <h4 style="color: #0066b2; margin-top: 30px; margin-bottom:5px;">📤 Zaprimljeni Upiti (Leadovi)</h4>
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th>Lead ID</th>
+                <th>Kampanja ID</th>
+                <th>Klijent</th>
+                <th>Broj Telefona</th>
+                <th>Općina</th>
+                <th>Mjesna Zajednica</th>
+                <th>Iznos</th>
+                <th>Svrha</th>
+                <th>Status Sync-a</th>
+              </tr>
+            </thead>
+            <tbody id="tabelaLeadova"></tbody>
+          </table>
+        </div>
 
       </div>
     </div>
@@ -328,7 +342,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, collection, doc, setDoc, getDocs, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, doc, setDoc, getDocs, updateDoc, deleteDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDSd7z4bIMcvAywJiot_Kii4XwsNbD4U-U",
@@ -356,7 +370,6 @@
 
     let trenutniTip = 'fizicko';
 
-    // UI Eventi
     document.getElementById('btnFizicko').addEventListener('click', () => setTipLica('fizicko'));
     document.getElementById('btnPravno').addEventListener('click', () => setTipLica('pravno'));
     document.getElementById('inputIznos').addEventListener('input', (e) => {
@@ -418,7 +431,7 @@
     document.getElementById('mkfKreditnaForma').addEventListener('input', validirajFormu);
     document.getElementById('mkfKreditnaForma').addEventListener('change', validirajFormu);
 
-    // SLANJE LEADA U FIREBASE
+    // SLANJE LEADA
     document.getElementById('mkfKreditnaForma').addEventListener('submit', async (e) => {
       e.preventDefault();
       const btnSubmit = document.getElementById('btnSubmit');
@@ -445,7 +458,6 @@
       try {
         await setDoc(doc(db, "leadovi", leadId), leadData);
         
-        // Povećaj brojač leadova za kampanju u bazi
         if (aktivnaKampanjaId) {
           await updateDoc(doc(db, "kampanje", aktivnaKampanjaId), {
             leadsCount: increment(1)
@@ -469,10 +481,14 @@
       validirajFormu();
     });
 
-    // ADMIN MODAL LOGIKA
+    // ADMIN MODAL & AUTOMATSKA ODJAVA
     const modal = document.getElementById('adminModal');
     document.getElementById('openAdminTrigger').addEventListener('click', () => modal.style.display = 'flex');
-    document.getElementById('btnCloseAdmin').addEventListener('click', () => modal.style.display = 'none');
+    
+    document.getElementById('btnCloseAdmin').addEventListener('click', async () => {
+      await signOut(auth);
+      modal.style.display = 'none';
+    });
 
     document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -495,7 +511,7 @@
       document.getElementById('btnCancelEdit').style.display = 'none';
     }
 
-    // KREIRANJE / UREĐIVANJE KAMPANJE (NUMERIČKI ID)
+    // ČISTI NUMERIČKI ID (#1, #2, #3)
     document.getElementById('formNovaKampanja').addEventListener('submit', async (e) => {
       e.preventDefault();
       
@@ -528,14 +544,13 @@
         resetAdminForma();
         ucitajAdminData();
       } catch (err) {
-        alert("Greška pri spavanju u bazu: " + err.message);
+        alert("Greška pri spremanju u bazu: " + err.message);
       }
     });
 
-    // UČITAVANJE PODATAKA U ADMIN TABELE
+    // UČITAVANJE ADMIN DATA SA BRISANJEM KAMPANJE
     async function ucitajAdminData() {
       try {
-        // 1. Učitaj Leadove
         const queryL = await getDocs(collection(db, "leadovi"));
         const tbodyL = document.getElementById('tabelaLeadova');
         tbodyL.innerHTML = queryL.empty ? '<tr><td colspan="9" style="text-align:center;">Nema zaprimljenih upita.</td></tr>' : '';
@@ -557,7 +572,6 @@
           `;
         });
 
-        // 2. Učitaj Kampanje (sa kompletnim kolonama iz File2)
         const queryK = await getDocs(collection(db, "kampanje"));
         const tbodyK = document.getElementById('tabelaKampanja');
         tbodyK.innerHTML = queryK.empty ? '<tr><td colspan="11" style="text-align:center;">Nema kreiranih kampanja.</td></tr>' : '';
@@ -593,12 +607,13 @@
                   ${k.status === 'Objavljena' ? '⏸️ Deaktiviraj' : '▶️ Aktiviraj'}
                 </button>
                 <button class="btn-action btn-copy-link" data-url="${shortUrl}">📋 Kopiraj</button>
+                <button class="btn-action btn-delete btn-delete-kampanja" data-id="${id}">🗑️ Obriši</button>
               </td>
             </tr>
           `;
         });
 
-        // Event slušaoci za akcije u tabeli
+        // AKCIJE: STATUS
         document.querySelectorAll('.btn-toggle-status').forEach(btn => {
           btn.addEventListener('click', async function() {
             const id = this.getAttribute('data-id');
@@ -609,6 +624,7 @@
           });
         });
 
+        // AKCIJE: UREDI
         document.querySelectorAll('.btn-edit-kampanja').forEach(btn => {
           btn.addEventListener('click', function() {
             const id = this.getAttribute('data-id');
@@ -625,11 +641,12 @@
               document.getElementById('formTitle').innerText = `✏️ Uređivanje kampanje #${id}`;
               document.getElementById('btnSaveKampanja').innerText = "SAČUVAJ IZMJENE";
               document.getElementById('btnCancelEdit').style.display = 'inline-block';
-              window.scrollTo({ top: 0, behavior: 'smooth' });
+              document.querySelector('.admin-modal-content').scrollTo({ top: 0, behavior: 'smooth' });
             }
           });
         });
 
+        // AKCIJE: KOPIRAJ
         document.querySelectorAll('.btn-copy-link').forEach(btn => {
           btn.addEventListener('click', function() {
             navigator.clipboard.writeText(this.getAttribute('data-url'));
@@ -637,12 +654,27 @@
           });
         });
 
+        // AKCIJE: OBRIŠI KAMPANJU
+        document.querySelectorAll('.btn-delete-kampanja').forEach(btn => {
+          btn.addEventListener('click', async function() {
+            const id = this.getAttribute('data-id');
+            if (confirm(`Da li ste sigurni da želite trajno obrisati kampanju #${id}?`)) {
+              try {
+                await deleteDoc(doc(db, "kampanje", id));
+                alert(`Kampanja #${id} je uspješno obrisana!`);
+                ucitajAdminData();
+              } catch (err) {
+                alert("Greška pri brisanju: " + err.message);
+              }
+            }
+          });
+        });
+
       } catch (err) {
-        console.error("Greška pri učitavanju analitike:", err);
+        console.error("Greška pri učitavanju:", err);
       }
     }
 
-    // DIREKTAN PRISTUP PREKO KRATKOG LINKA (?c=1)
     async function provjeriKampanjuUrl() {
       const urlParams = new URLSearchParams(window.location.search);
       const campId = urlParams.get('c');
@@ -657,7 +689,6 @@
           });
 
           if (nadjena) {
-            // Zabeleži posjetu (Views + 1)
             await updateDoc(doc(db, "kampanje", campId), {
               viewsCount: increment(1)
             });
@@ -692,7 +723,6 @@
 
     provjeriKampanjuUrl();
 
-    // AUTH PROVJERA
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         document.getElementById('adminLoginView').style.display = 'none';
