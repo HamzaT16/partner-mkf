@@ -85,8 +85,8 @@
       filter: grayscale(1);
     }
     
-    .mkf-btn-submit { width: 100%; padding: 16px; background: #0066b2; color: #fff; border: none; border-radius: 12px; font-weight: 800; font-size: 14px; cursor: pointer; text-transform: uppercase; margin-top: 10px; }
-    .mkf-btn-submit:disabled { background: #94a3b8; cursor: not-allowed; }
+    .mkf-btn-submit { width: 100%; padding: 16px; background: #0066b2; color: #fff; border: none; border-radius: 12px; font-weight: 800; font-size: 14px; cursor: pointer; text-transform: uppercase; margin-top: 10px; transition: all 0.2s ease; }
+    .mkf-btn-submit:disabled { background: #cbd5e1; color: #94a3b8; cursor: not-allowed; opacity: 0.7; }
 
     /* PORUKE I EKRANI */
     .status-card { text-align: center; padding: 20px; display: none; }
@@ -208,11 +208,11 @@
         <div class="mkf-grid2" id="fieldsFizicko">
           <div class="mkf-field">
             <label>Ime *</label>
-            <input type="text" id="inputIme" class="mkf-input" placeholder="Unesite ime" required>
+            <input type="text" id="inputIme" class="mkf-input" placeholder="Unesite ime">
           </div>
           <div class="mkf-field">
             <label>Prezime *</label>
-            <input type="text" id="inputPrezime" class="mkf-input" placeholder="Unesite prezime" required>
+            <input type="text" id="inputPrezime" class="mkf-input" placeholder="Unesite prezime">
           </div>
         </div>
 
@@ -229,13 +229,13 @@
 
         <div class="mkf-field">
           <label>Broj telefona (BiH +387) *</label>
-          <input type="tel" id="inputTelefon" class="mkf-input" placeholder="+387 61 123 456" required>
+          <input type="tel" id="inputTelefon" class="mkf-input" placeholder="+387 61 123 456">
         </div>
 
         <div class="mkf-grid2">
           <div class="mkf-field">
             <label>Općina *</label>
-            <select id="selectOpcina" class="mkf-select" onchange="osvjeziMjesneZajednice()" required>
+            <select id="selectOpcina" class="mkf-select" onchange="osvjeziMjesneZajednice()">
               <option value="" disabled selected>Odaberite općinu</option>
               <option value="Novi Grad Sarajevo">Novi Grad Sarajevo</option>
               <option value="Tuzla">Tuzla</option>
@@ -246,7 +246,7 @@
           </div>
           <div class="mkf-field">
             <label>Mjesna zajednica *</label>
-            <select id="selectMZ" class="mkf-select" disabled required>
+            <select id="selectMZ" class="mkf-select" disabled>
               <option value="" disabled selected>Prvo izaberite općinu</option>
             </select>
           </div>
@@ -274,12 +274,12 @@
 
         <div class="mkf-field" style="margin-top: 10px;">
           <label style="font-size: 11px; color: #64748b; text-transform: none; display: flex; gap: 8px; cursor: pointer;">
-            <input type="checkbox" id="checkConsent" required> 
+            <input type="checkbox" id="checkConsent"> 
             Saglasan/na sam da MKF Partner obrađuje moje podatke u svrhu obrade kreditnog zahtjeva.
           </label>
         </div>
 
-        <button type="submit" class="mkf-btn-submit" id="btnSubmit">POŠALJI KREDITNI UPIT →</button>
+        <button type="submit" class="mkf-btn-submit" id="btnSubmit" disabled>POŠALJI KREDITNI UPIT →</button>
       </form>
     </div>
 
@@ -484,7 +484,38 @@
         document.getElementById('screenInactive').style.display = 'none';
         primijeniLogikuProizvoda(aktivnaKampanja.proizvod);
       }
+
+      validirajFormu();
     }
+
+    /* --- LOGIKA VALIDACIJE I DUGMETA SUBMIT --- */
+    function validirajFormu() {
+      const btnSubmit = document.getElementById('btnSubmit');
+      const isConsentChecked = document.getElementById('checkConsent').checked;
+      const opcinaVal = document.getElementById('selectOpcina').value;
+      const mzVal = document.getElementById('selectMZ').value;
+      const telVal = document.getElementById('inputTelefon').value.trim();
+
+      let isIdentityValid = false;
+
+      if (trenutniTip === 'fizicko') {
+        const imeVal = document.getElementById('inputIme').value.trim();
+        const prezimeVal = document.getElementById('inputPrezime').value.trim();
+        isIdentityValid = imeVal !== '' && prezimeVal !== '';
+      } else {
+        const firmaVal = document.getElementById('inputNazivFirme').value.trim();
+        const kontaktVal = document.getElementById('inputKontaktOsoba').value.trim();
+        isIdentityValid = firmaVal !== '' && kontaktVal !== '';
+      }
+
+      const isFormValid = isConsentChecked && isIdentityValid && telVal !== '' && opcinaVal !== '' && mzVal !== '';
+
+      btnSubmit.disabled = !isFormValid;
+    }
+
+    // Pratimo promjene na poljima forme radi live validacije
+    document.getElementById('mkfKreditnaForma').addEventListener('input', validirajFormu);
+    document.getElementById('mkfKreditnaForma').addEventListener('change', validirajFormu);
 
     function primijeniLogikuProizvoda(ciljaniProizvod) {
       const cards = document.querySelectorAll('.mkf-purpose-card');
@@ -512,7 +543,7 @@
       const mzSelect = document.getElementById('selectMZ');
       const odabranaOpcina = opcinaSelect.value;
 
-      mzSelect.innerHTML = '<option value="" disabled selected>Odaberite mjesnu zajednicu</option>';
+      mzSelect.innerHTML = '<option value="" disabled selected>Odaberite mjesnu zajedницу</option>';
       
       if (MJESNE_ZAJEDNICE[odabranaOpcina]) {
         MJESNE_ZAJEDNICE[odabranaOpcina].forEach(mz => {
@@ -522,6 +553,7 @@
       } else {
         mzSelect.disabled = true;
       }
+      validirajFormu();
     }
 
     function odaberiSvrhu(element, vrednost) {
@@ -539,23 +571,6 @@
 
     document.getElementById('mkfKreditnaForma').addEventListener('submit', async (e) => {
       e.preventDefault();
-
-      if (!document.getElementById('checkConsent').checked) {
-        alert('Morate prihvatiti saglasnost za obradu podataka da biste poslali upit.');
-        return;
-      }
-
-      if (trenutniTip === 'fizicko') {
-        if (!document.getElementById('inputIme').value.trim() || !document.getElementById('inputPrezime').value.trim()) {
-          alert('Molimo unesite Ime i Prezime.');
-          return;
-        }
-      } else {
-        if (!document.getElementById('inputNazivFirme').value.trim() || !document.getElementById('inputKontaktOsoba').value.trim()) {
-          alert('Molimo unesite Naziv firme i Kontakt osobu.');
-          return;
-        }
-      }
 
       const btnSubmit = document.getElementById('btnSubmit');
       btnSubmit.disabled = true;
@@ -621,6 +636,13 @@
     function zatvoriIOdjaviAdmina() {
       odjaviAdmina();
       document.getElementById('adminModal').style.display = 'none';
+
+      // Vraćanje URL-a na inicijalnu formu (uklanjanje #admin ili ?admin bez osvježavanja)
+      let cleanUrl = window.location.pathname;
+      if (aktivnaKampanja && aktivnaKampanja.id && aktivnaKampanja.id !== '1') {
+        cleanUrl += '?id=' + aktivnaKampanja.id;
+      }
+      window.history.pushState({}, document.title, cleanUrl);
     }
 
     async function prijaviAdmina(e) {
@@ -798,15 +820,12 @@
       document.getElementById('fieldsFizicko').style.display = isFizicko ? 'grid' : 'none';
       document.getElementById('fieldsPravno').style.display = isFizicko ? 'none' : 'grid';
 
-      document.getElementById('inputIme').required = isFizicko;
-      document.getElementById('inputPrezime').required = isFizicko;
-      document.getElementById('inputNazivFirme').required = !isFizicko;
-      document.getElementById('inputKontaktOsoba').required = !isFizicko;
+      validirajFormu();
     }
 
     function resetForma() {
       document.getElementById('mkfKreditnaForma').reset();
-      document.getElementById('btnSubmit').disabled = false;
+      document.getElementById('btnSubmit').disabled = true;
       document.getElementById('btnSubmit').innerText = "POŠALJI KREDITNI UPIT →";
       document.getElementById('mkfKreditnaForma').style.display = 'block';
       document.getElementById('screenSuccess').style.display = 'none';
