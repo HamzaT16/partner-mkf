@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Partner MKF - Kreditni Upit</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- SheetJS za Excel Export -->
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
   <style>
     * { box-sizing: border-box; }
     body { background-color: #f1f5f9; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; margin: 0; padding: 0; color: #0f172a; }
@@ -42,10 +44,10 @@
     .mkf-input, .mkf-select { width: 100%; padding: 11px; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 8px; font-weight: 500; outline: none; font-size: 13.5px; }
     .mkf-input:focus, .mkf-select:focus { border-color: #0066b2; background: #fff; }
 
-    /* FLEKSIBILNA SVRHA / PROIZVOD */
-    .mkf-purpose-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px; margin-top: 4px; }
-    .mkf-purpose-card { border: 1.5px solid #e2e8f0; background: #f8fafc; border-radius: 12px; padding: 10px 6px; text-align: center; cursor: pointer; transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; gap: 4px; }
-    .mkf-purpose-card .icon { font-size: 20px; }
+    /* SVRHA / PROIZVOD (GRID ZA 4 PROIZVODA) */
+    .mkf-purpose-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(105px, 1fr)); gap: 8px; margin-top: 4px; }
+    .mkf-purpose-card { border: 1.5px solid #e2e8f0; background: #f8fafc; border-radius: 12px; padding: 10px 4px; text-align: center; cursor: pointer; transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .mkf-purpose-card .icon { font-size: 22px; }
     .mkf-purpose-card .title { font-size: 11px; font-weight: 700; color: #475569; }
     .mkf-purpose-card:hover { border-color: #93c5fd; background: #f0f7ff; }
     .mkf-purpose-card.selected { border-color: #0066b2; background: #f0f7ff; box-shadow: 0 2px 8px rgba(0, 102, 178, 0.12); }
@@ -61,12 +63,17 @@
     .status-title { font-size: 18px; font-weight: 800; color: #0f172a; margin-bottom: 8px; }
     .status-desc { font-size: 13.5px; color: #64748b; margin-bottom: 18px; }
 
-    /* ADMIN MODAL FLEKSIBILNOST */
+    /* ADMIN MODAL */
     .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 10px; }
     .admin-modal-content { background: #ffffff; width: 100%; max-width: 1250px; max-height: 94vh; border-radius: 16px; overflow-y: auto; padding: 20px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
     .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; margin-bottom: 16px; }
     .btn-close { background: transparent; border: none; font-size: 22px; cursor: pointer; color: #64748b; font-weight: bold; }
     .btn-logout { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; padding: 6px 12px; border-radius: 6px; font-size: 11.5px; font-weight: 700; cursor: pointer; }
+
+    /* EXCEL EXPORT DUGME */
+    .btn-excel { background: #107c41; color: white; border: none; padding: 8px 14px; border-radius: 8px; font-size: 12px; font-weight: 700; cursor: pointer; transition: background 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-excel:hover { background: #0b6131; }
+    .btn-excel:disabled { background: #cbd5e1; cursor: not-allowed; }
 
     /* RESPONZIVNE TABELE */
     .table-responsive { width: 100%; overflow-x: auto; margin-top: 10px; border-radius: 8px; border: 1px solid #e2e8f0; }
@@ -177,20 +184,24 @@
         <div class="mkf-field">
           <label>Svrha / Proizvod kredita *</label>
           <div class="mkf-purpose-grid">
-            <div class="mkf-purpose-card selected" id="card-esg" data-value="ESG / Energetska efikasnost">
-              <span class="icon">🌱</span>
-              <span class="title">Energetska efikasnost</span>
-            </div>
-            <div class="mkf-purpose-card" id="card-biznis" data-value="Obratna sredstva / Biznis">
-              <span class="icon">💼</span>
-              <span class="title">Obratna sredstva</span>
+            <div class="mkf-purpose-card selected" id="card-stanovnistvo" data-value="Stanovništvo">
+              <span class="icon">🏠</span>
+              <span class="title">Stanovništvo</span>
             </div>
             <div class="mkf-purpose-card" id="card-agro" data-value="Poljoprivreda">
               <span class="icon">🚜</span>
               <span class="title">Poljoprivreda</span>
             </div>
+            <div class="mkf-purpose-card" id="card-biznis" data-value="Biznis">
+              <span class="icon">💼</span>
+              <span class="title">Biznis</span>
+            </div>
+            <div class="mkf-purpose-card" id="card-zeleni" data-value="Zeleni krediti">
+              <span class="icon">🍃</span>
+              <span class="title">Zeleni krediti</span>
+            </div>
           </div>
-          <input type="hidden" id="inputSvrhaVal" value="ESG / Energetska efikasnost">
+          <input type="hidden" id="inputSvrhaVal" value="Stanovništvo">
         </div>
 
         <div class="mkf-field" style="margin-top: 6px;">
@@ -248,9 +259,10 @@
                 <label>Targetirani Proizvod / Svrha *</label>
                 <select id="newProizvod" class="mkf-select">
                   <option value="SVI">Svi proizvodi (Korisnik sam bira)</option>
-                  <option value="ESG / Energetska efikasnost">Energetska efikasnost</option>
-                  <option value="Obratna sredstva / Biznis">Obratna sredstva / Biznis</option>
+                  <option value="Stanovništvo">Stanovništvo</option>
                   <option value="Poljoprivreda">Poljoprivreda</option>
+                  <option value="Biznis">Biznis</option>
+                  <option value="Zeleni krediti">Zeleni krediti</option>
                 </select>
               </div>
             </div>
@@ -315,7 +327,12 @@
           </table>
         </div>
 
-        <h4 style="color: #0066b2; margin-top: 30px; margin-bottom:5px;">📤 Zaprimljeni Upiti (Leadovi)</h4>
+        <!-- LEADOVI SEKCIJA SA EXCEL EXPORT GUMBOM -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 30px; margin-bottom: 8px; flex-wrap: wrap; gap: 10px;">
+          <h4 style="color: #0066b2; margin: 0;">📤 Zaprimljeni Upiti (Leadovi)</h4>
+          <button id="btnExportExcel" class="btn-excel" disabled>📊 Izvezi u Excel (.xlsx)</button>
+        </div>
+
         <div class="table-responsive">
           <table>
             <thead>
@@ -323,11 +340,13 @@
                 <th>Lead ID</th>
                 <th>Kampanja ID</th>
                 <th>Klijent</th>
+                <th>Tip Lica</th>
                 <th>Broj Telefona</th>
                 <th>Općina</th>
                 <th>Mjesna Zajednica</th>
                 <th>Iznos</th>
                 <th>Svrha</th>
+                <th>Datum Zaprimanja</th>
                 <th>Status Sync-a</th>
               </tr>
             </thead>
@@ -341,7 +360,14 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { 
+      getAuth, 
+      signInWithEmailAndPassword, 
+      signOut, 
+      onAuthStateChanged, 
+      setPersistence, 
+      browserSessionPersistence 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getFirestore, collection, doc, setDoc, getDocs, updateDoc, deleteDoc, increment } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -358,6 +384,7 @@
     const db = getFirestore(app);
 
     let listaKampanja = [];
+    let listaLeadova = [];
     let aktivnaKampanjaId = null;
 
     const MJESNE_ZAJEDNICE = {
@@ -431,32 +458,43 @@
     document.getElementById('mkfKreditnaForma').addEventListener('input', validirajFormu);
     document.getElementById('mkfKreditnaForma').addEventListener('change', validirajFormu);
 
-    // SLANJE LEADA
+    // SLANJE LEADA SA REDNIM BROJEM (1, 2, 3...)
     document.getElementById('mkfKreditnaForma').addEventListener('submit', async (e) => {
       e.preventDefault();
       const btnSubmit = document.getElementById('btnSubmit');
       btnSubmit.disabled = true;
       btnSubmit.innerText = "SLANJE U TOKU...";
 
-      const leadId = 'LEAD-' + Date.now().toString(36).toUpperCase();
-      const leadData = {
-        leadId: leadId,
-        kampanjaId: aktivnaKampanjaId || "Generalno",
-        tipLica: trenutniTip,
-        klijent: trenutniTip === 'fizicko'
-          ? document.getElementById('inputIme').value + ' ' + document.getElementById('inputPrezime').value
-          : document.getElementById('inputNazivFirme').value + ' (' + document.getElementById('inputKontaktOsoba').value + ')',
-        telefon: document.getElementById('inputTelefon').value,
-        opcina: document.getElementById('selectOpcina').value,
-        mjesnaZajednica: document.getElementById('selectMZ').value || '-',
-        iznos: document.getElementById('inputIznos').value + ' KM',
-        svrha: document.getElementById('inputSvrhaVal').value,
-        datum: new Date().toLocaleString('bs-BA'),
-        crmSyncStatus: "SYNCHRONIZED"
-      };
-
       try {
-        await setDoc(doc(db, "leadovi", leadId), leadData);
+        const queryExistingLeads = await getDocs(collection(db, "leadovi"));
+        let maxLeadId = 0;
+        queryExistingLeads.forEach(docSnap => {
+          const num = parseInt(docSnap.id);
+          if (!isNaN(num) && num > maxLeadId) {
+            maxLeadId = num;
+          }
+        });
+
+        const newLeadNum = maxLeadId + 1;
+        const leadIdStr = newLeadNum.toString();
+
+        const leadData = {
+          leadId: newLeadNum,
+          kampanjaId: aktivnaKampanjaId || "Generalno",
+          tipLica: trenutniTip === 'fizicko' ? 'Fizičko lice' : 'Pravno lice',
+          klijent: trenutniTip === 'fizicko'
+            ? document.getElementById('inputIme').value + ' ' + document.getElementById('inputPrezime').value
+            : document.getElementById('inputNazivFirme').value + ' (' + document.getElementById('inputKontaktOsoba').value + ')',
+          telefon: document.getElementById('inputTelefon').value,
+          opcina: document.getElementById('selectOpcina').value,
+          mjesnaZajednica: document.getElementById('selectMZ').value || '-',
+          iznos: document.getElementById('inputIznos').value + ' KM',
+          svrha: document.getElementById('inputSvrhaVal').value,
+          datum: new Date().toLocaleString('bs-BA'),
+          crmSyncStatus: "SYNCHRONIZED"
+        };
+
+        await setDoc(doc(db, "leadovi", leadIdStr), leadData);
         
         if (aktivnaKampanjaId) {
           await updateDoc(doc(db, "kampanje", aktivnaKampanjaId), {
@@ -481,19 +519,57 @@
       validirajFormu();
     });
 
-    // ADMIN MODAL & AUTOMATSKA ODJAVA
+    // EXCEL EXPORT
+    document.getElementById('btnExportExcel').addEventListener('click', () => {
+      if (!listaLeadova || listaLeadova.length === 0) {
+        alert("Nema podataka za izvoz!");
+        return;
+      }
+
+      const excelData = listaLeadova.map(l => ({
+        "Lead ID": l.leadId || '-',
+        "Kampanja ID": l.kampanjaId || 'Generalno',
+        "Klijent": l.klijent || '-',
+        "Tip Lica": l.tipLica || '-',
+        "Telefon": l.telefon || '-',
+        "Općina": l.opcina || '-',
+        "Mjesna Zajednica": l.mjesnaZajednica || '-',
+        "Iznos": l.iznos || '-',
+        "Svrha / Proizvod": l.svrha || '-',
+        "Datum Zaprimanja": l.datum || '-',
+        "Status CRM Sync-a": l.crmSyncStatus || 'SYNCHRONIZED'
+      }));
+
+      const worksheet = XLSX.utils.json_to_sheet(excelData);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Leadovi");
+
+      const fitToColumn = Object.keys(excelData[0]).map(key => ({ wch: Math.max(key.length, 18) }));
+      worksheet['!cols'] = fitToColumn;
+
+      const danasnjiDatum = new Date().toISOString().split('T')[0];
+      XLSX.writeFile(workbook, `Leadovi_Partner_MKF_${danasnjiDatum}.xlsx`);
+    });
+
+    // ADMIN MODAL & ODJAVA
     const modal = document.getElementById('adminModal');
     document.getElementById('openAdminTrigger').addEventListener('click', () => modal.style.display = 'flex');
     
+    // Zatvaranje modala ujedno i odjavljuje admina
     document.getElementById('btnCloseAdmin').addEventListener('click', async () => {
       await signOut(auth);
       modal.style.display = 'none';
     });
 
+    // PRIJAVA SA SESIJSKOM PERZISTENCIJOM (odjava nakon zatvaranja browsera)
     document.getElementById('adminLoginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
+      const email = document.getElementById('adminEmail').value;
+      const pass = document.getElementById('adminPass').value;
+
       try {
-        await signInWithEmailAndPassword(auth, document.getElementById('adminEmail').value, document.getElementById('adminPass').value);
+        await setPersistence(auth, browserSessionPersistence);
+        await signInWithEmailAndPassword(auth, email, pass);
       } catch (err) {
         alert("Neispravni podaci za prijavu!");
       }
@@ -511,7 +587,7 @@
       document.getElementById('btnCancelEdit').style.display = 'none';
     }
 
-    // ČISTI NUMERIČKI ID (#1, #2, #3)
+    // SAČUVAJ KAMPANJU
     document.getElementById('formNovaKampanja').addEventListener('submit', async (e) => {
       e.preventDefault();
       
@@ -548,29 +624,45 @@
       }
     });
 
-    // UČITAVANJE ADMIN DATA SA BRISANJEM KAMPANJE
+    // UČITAVANJE DATA I SORTIRANJE LEADOVA PO REDNOM BROJU
     async function ucitajAdminData() {
       try {
         const queryL = await getDocs(collection(db, "leadovi"));
         const tbodyL = document.getElementById('tabelaLeadova');
-        tbodyL.innerHTML = queryL.empty ? '<tr><td colspan="9" style="text-align:center;">Nema zaprimljenih upita.</td></tr>' : '';
+        tbodyL.innerHTML = queryL.empty ? '<tr><td colspan="11" style="text-align:center;">Nema zaprimljenih upita.</td></tr>' : '';
         
-        queryL.forEach(docSnap => {
-          const l = docSnap.data();
-          tbodyL.innerHTML += `
-            <tr>
-              <td><b>${l.leadId || docSnap.id}</b></td>
-              <td><span class="badge" style="background:#f1f5f9; color:#475569;">#${l.kampanjaId || 'Generalno'}</span></td>
-              <td><b>${l.klijent || '-'}</b></td>
-              <td>${l.telefon || '-'}</td>
-              <td>${l.opcina || '-'}</td>
-              <td>${l.mjesnaZajednica || '-'}</td>
-              <td><b>${l.iznos || '-'}</b></td>
-              <td>${l.svrha || '-'}</td>
-              <td><span class="badge badge-active">${l.crmSyncStatus || 'SYNCHRONIZED'}</span></td>
-            </tr>
-          `;
-        });
+        listaLeadova = [];
+        const btnExcel = document.getElementById('btnExportExcel');
+
+        if (queryL.empty) {
+          btnExcel.disabled = true;
+        } else {
+          btnExcel.disabled = false;
+          queryL.forEach(docSnap => {
+            const l = docSnap.data();
+            listaLeadova.push(l);
+          });
+
+          listaLeadova.sort((a, b) => (parseInt(b.leadId) || 0) - (parseInt(a.leadId) || 0));
+
+          listaLeadova.forEach(l => {
+            tbodyL.innerHTML += `
+              <tr>
+                <td><b>#${l.leadId}</b></td>
+                <td><span class="badge" style="background:#f1f5f9; color:#475569;">#${l.kampanjaId || 'Generalno'}</span></td>
+                <td><b>${l.klijent || '-'}</b></td>
+                <td><small style="color:#64748b; font-weight:600;">${l.tipLica || '-'}</small></td>
+                <td>${l.telefon || '-'}</td>
+                <td>${l.opcina || '-'}</td>
+                <td>${l.mjesnaZajednica || '-'}</td>
+                <td><b>${l.iznos || '-'}</b></td>
+                <td>${l.svrha || '-'}</td>
+                <td><small>${l.datum || '-'}</small></td>
+                <td><span class="badge badge-active">${l.crmSyncStatus || 'SYNCHRONIZED'}</span></td>
+              </tr>
+            `;
+          });
+        }
 
         const queryK = await getDocs(collection(db, "kampanje"));
         const tbodyK = document.getElementById('tabelaKampanja');
@@ -613,7 +705,7 @@
           `;
         });
 
-        // AKCIJE: STATUS
+        // AKCIJE STATUS
         document.querySelectorAll('.btn-toggle-status').forEach(btn => {
           btn.addEventListener('click', async function() {
             const id = this.getAttribute('data-id');
@@ -624,7 +716,7 @@
           });
         });
 
-        // AKCIJE: UREDI
+        // AKCIJE UREDI
         document.querySelectorAll('.btn-edit-kampanja').forEach(btn => {
           btn.addEventListener('click', function() {
             const id = this.getAttribute('data-id');
@@ -646,7 +738,7 @@
           });
         });
 
-        // AKCIJE: KOPIRAJ
+        // AKCIJE KOPIRAJ LINK
         document.querySelectorAll('.btn-copy-link').forEach(btn => {
           btn.addEventListener('click', function() {
             navigator.clipboard.writeText(this.getAttribute('data-url'));
@@ -654,7 +746,7 @@
           });
         });
 
-        // AKCIJE: OBRIŠI KAMPANJU
+        // AKCIJE OBRIŠI KAMPANJU
         document.querySelectorAll('.btn-delete-kampanja').forEach(btn => {
           btn.addEventListener('click', async function() {
             const id = this.getAttribute('data-id');
